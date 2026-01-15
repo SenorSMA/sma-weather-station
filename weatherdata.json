@@ -1,0 +1,28 @@
+{
+  "weather": {
+    "temperature": "22.5",
+    "humidity": "65",
+    "pressure": "1013.25",
+    "winddirection": "NE",
+    "batterypercentage": "85"
+  },
+  "aggregated": {
+    "mintemperature": "18",
+    "maxtemperature": "28",
+    "barotrend": "1.2",
+    "rainhour": "0",
+    "rainday": "0",
+    "windmps": "3.5",
+    "windmph": "7.8",
+    "windknots": "6.8",
+    "gustsmps": "5.2",
+    "gustsmph": "11.6",
+    "gustsknots": "10.1"
+  },
+  "sun": {
+    "azimuth": "145",
+    "inclination": "45"
+  },
+  "updated-de": "Tue, Jan 14, 09:30 AM",
+  "offline": false
+}
