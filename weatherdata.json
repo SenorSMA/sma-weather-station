@@ -1,15 +1,15 @@
 {
   "weather": {
-    "temperature": "19.3",
+    "temperature": "19.4",
     "humidity": "47",
-    "pressure": "801.68",
+    "pressure": "801.62",
     "winddirection": "NNE",
     "batterypercentage": "65"
   },
   "aggregated": {
     "mintemperature": "19",
     "maxtemperature": "19",
-    "barotrend": "-0.0",
+    "barotrend": "-0.1",
     "rainhour": "0.0",
     "rainday": "0.0",
     "windmps": "0.0",
@@ -23,6 +23,6 @@
     "azimuth": "221",
     "inclination": "36"
   },
-  "updated-de": "Sat, Jan 17, 03:11 PM",
+  "updated-de": "Sat, Jan 17, 03:12 PM",
   "offline": false
 }
