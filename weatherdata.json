@@ -1,28 +1,28 @@
 {
   "weather": {
-    "temperature": "-1.0",
-    "humidity": "-1",
-    "pressure": "-1.00",
-    "winddirection": "",
-    "batterypercentage": " 0"
+    "temperature": "18.5",
+    "humidity": "51",
+    "pressure": "802.67",
+    "winddirection": "NNE",
+    "batterypercentage": "67"
   },
   "aggregated": {
-    "mintemperature": "-",
-    "maxtemperature": "-",
-    "barotrend": "-",
-    "rainhour": "-",
-    "rainday": "-",
-    "windmps": "-",
-    "windmph": "-",
-    "windknots": "-",
-    "gustsmps": "-",
-    "gustsmph": "-",
-    "gustsknots": "-"
+    "mintemperature": "18",
+    "maxtemperature": "18",
+    "barotrend": "-0.0",
+    "rainhour": "0.0",
+    "rainday": "0.0",
+    "windmps": "0.0",
+    "windmph": "0.0",
+    "windknots": "0.0",
+    "gustsmps": "0.0",
+    "gustsmph": "0.0",
+    "gustsknots": "0.0"
   },
   "sun": {
-    "azimuth": "180",
-    "inclination": "30"
+    "azimuth": "185",
+    "inclination": "48"
   },
-  "updated-de": "Sat, Jan 17, 01:06 PM",
-  "offline": true
+  "updated-de": "Sat, Jan 17, 01:07 PM",
+  "offline": false
 }
