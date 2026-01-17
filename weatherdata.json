@@ -4,12 +4,12 @@
     "humidity": "45",
     "pressure": "801.49",
     "winddirection": "NNE",
-    "batterypercentage": "65"
+    "batterypercentage": "63"
   },
   "aggregated": {
     "mintemperature": "19",
     "maxtemperature": "20",
-    "barotrend": "-0.1",
+    "barotrend": "-0.0",
     "rainhour": "0.0",
     "rainday": "0.0",
     "windmps": "0.0",
