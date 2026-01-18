@@ -2,14 +2,14 @@
   "weather": {
     "temperature": "18.0",
     "humidity": "56",
-    "pressure": "805.60",
+    "pressure": "805.62",
     "winddirection": "NNE",
     "batterypercentage": "57"
   },
   "aggregated": {
     "mintemperature": "18",
     "maxtemperature": "18",
-    "barotrend": "-0.1",
+    "barotrend": "0.0",
     "rainhour": "0.0",
     "rainday": "0.0",
     "windmps": "0.0",
