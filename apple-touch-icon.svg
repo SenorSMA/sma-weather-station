@@ -1,0 +1,45 @@
+<svg width="180" height="180" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="skyGrad">
+      <stop offset="0%" style="stop-color:#87CEEB;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#4A90E2;stop-opacity:1" />
+    </radialGradient>
+    <radialGradient id="sunGrad">
+      <stop offset="0%" style="stop-color:#FFF4D6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f4d03f;stop-opacity:1" />
+    </radialGradient>
+  </defs>
+  
+  <!-- Blue sky background -->
+  <rect x="0" y="0" width="180" height="180" fill="url(#skyGrad)"/>
+  
+  <!-- Sun rays -->
+  <g opacity="0.7">
+    <line x1="90" y1="21" x2="90" y2="42" stroke="#E67E50" stroke-width="5" stroke-linecap="round"/>
+    <line x1="133" y1="32" x2="118" y2="47" stroke="#E67E50" stroke-width="5" stroke-linecap="round"/>
+    <line x1="159" y1="70" x2="138" y2="70" stroke="#E67E50" stroke-width="5" stroke-linecap="round"/>
+    <line x1="133" y1="109" x2="118" y2="93" stroke="#E67E50" stroke-width="5" stroke-linecap="round"/>
+    <line x1="47" y1="32" x2="62" y2="47" stroke="#E67E50" stroke-width="5" stroke-linecap="round"/>
+    <line x1="21" y1="70" x2="42" y2="70" stroke="#E67E50" stroke-width="5" stroke-linecap="round"/>
+    <line x1="47" y1="109" x2="62" y2="93" stroke="#E67E50" stroke-width="5" stroke-linecap="round"/>
+    <line x1="90" y1="119" x2="90" y2="98" stroke="#E67E50" stroke-width="5" stroke-linecap="round"/>
+  </g>
+  
+  <!-- Sun -->
+  <circle cx="90" cy="70" r="32" fill="url(#sunGrad)"/>
+  <circle cx="90" cy="70" r="26" fill="#FFF9E6" opacity="0.5"/>
+  
+  <!-- S and A -->
+  <g>
+    <text x="51" y="147" font-family="'Times New Roman', serif" font-size="39" font-weight="bold" 
+          fill="#CC5500" text-anchor="middle">S</text>
+    <text x="129" y="147" font-family="'Times New Roman', serif" font-size="39" font-weight="bold" 
+          fill="#CC5500" text-anchor="middle">A</text>
+  </g>
+  
+  <!-- Custom M -->
+  <g transform="translate(90, 112)" fill="#CC5500">
+    <path d="M -18 35 L -18 0 L 0 28 L 18 0 L 18 35 L 13 35 L 13 12 L 0 32 L -13 12 L -13 35 Z" 
+          stroke="#CC5500" stroke-width="0.7" stroke-linejoin="miter"/>
+  </g>
+</svg>

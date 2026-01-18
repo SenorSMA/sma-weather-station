@@ -1,0 +1,13 @@
+<svg width="32" height="32" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="skyGrad">
+      <stop offset="0%" style="stop-color:#87CEEB;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#4A90E2;stop-opacity:1" />
+    </radialGradient>
+  </defs>
+  
+  <rect x="0" y="0" width="32" height="32" fill="url(#skyGrad)"/>
+  <circle cx="16" cy="12" r="6" fill="#f4d03f"/>
+  <text x="16" y="28" font-family="Arial, sans-serif" font-size="14" font-weight="bold" 
+        fill="#CC5500" text-anchor="middle">M</text>
+</svg>
