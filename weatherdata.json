@@ -1,8 +1,8 @@
 {
   "weather": {
-    "temperature": "18.5",
+    "temperature": "18.4",
     "humidity": "52",
-    "pressure": "805.67",
+    "pressure": "805.65",
     "winddirection": "NNE",
     "batterypercentage": "60"
   },
