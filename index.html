@@ -32,12 +32,12 @@
             option { font-family: Arial, Helvetica, Sans-Serif; font-size: 32pt; }
             selection { font-family: Arial, Helvetica, Sans-Serif; font-size: 32pt; }
 
-            .item-header { grid-area: header; padding-top: 0.5em; padding-left: 1em; padding-right: 1em; }
-            .item-current { grid-area: current; padding-left: 1em; padding-right: 1em; }
-            .item-forecast { grid-area: forecast; padding-left: 1em; padding-right: 1em; }
-            .item-footer { grid-area: footer; padding-left: 1em; padding-right: 1em; }
+            .item-header { grid-area: header; padding-top: 0.5em; padding-left: 0.4em; padding-right: 0.4em; }
+            .item-current { grid-area: current; padding-left: 0.4em; padding-right: 0.4em; }
+            .item-forecast { grid-area: forecast; padding-left: 0.4em; padding-right: 0.4em; }
+            .item-footer { grid-area: footer; padding-left: 0.4em; padding-right: 0.4em; }
 
-            table { margin-left:1em; }
+            table { margin-left:0.4em; }
             td { font-size: 32pt; padding-right: 15px; padding-bottom: 10px; }
             .forecast-table td { font-size: 32pt; padding: 10px; background-color:#F6F6F6; }
             .forecast-weekend-row td { font-size: 32pt; padding: 10px; background-color:#E6E6E6; }
@@ -96,8 +96,8 @@
         <div class="layout">
             <div class="item-header">
                 <div class="banner">
-                    <h1>SMA Weather</h1>
-                    <p>Central Mexico 6,614 ft</p>
+                    <h1 data-translate="title">SMA Weather</h1>
+                    <p data-translate="subtitle">Central Mexico 6,614 ft</p>
                     <div class="language-selector">
                         <button id="lang-toggle" onclick="toggleLanguage()" style="background: transparent; border: 2px solid #5a4a3a; border-radius: 8px; padding: 5px; cursor: pointer; display: flex; align-items: center; justify-content: center; width: 50px; height: 40px;">
                             <img id="flag-img" src="https://flagcdn.com/w40/us.png" alt="Language" style="width: 30px; height: auto;">
@@ -107,7 +107,7 @@
                 <p id="message" hidden></p>
             </div>
             <div class="item-current">
-                <h3 style="font-size: 72%; text-align: center; color: #5a4a3a;" data-translate="current-conditions">Current Conditions</h3>
+                <h3 style="font-size: 72%; text-align: center; color: #5a4a3a; margin-bottom: 2em;" data-translate="current-conditions">Current Conditions</h3>
                 <table id="weather-table">
                      <tr>
                         <td style="text-align:center"><img src="temperature.png" height="80"></td>
@@ -439,6 +439,8 @@
             // Language translations
             const translations = {
                 en: {
+                    'title': 'SMA Weather',
+                    'subtitle': 'Central Mexico 6,614 ft',
                     'current-conditions': 'Current Conditions',
                     'temperature': 'Temperature',
                     'humidity': 'Humidity',
@@ -452,6 +454,8 @@
                     'data-from': 'Data from'
                 },
                 mx: {
+                    'title': 'Clima SMA',
+                    'subtitle': 'Centro de México 6,614 pies',
                     'current-conditions': 'Condiciones Actuales',
                     'temperature': 'Temperatura',
                     'humidity': 'Humedad',
@@ -475,9 +479,9 @@
                 // Update flag image
                 const flagImg = document.getElementById('flag-img');
                 if (currentLanguage === 'en') {
-                    flagImg.src = 'https://flagcdn.com/w40/us.png';
-                } else {
                     flagImg.src = 'https://flagcdn.com/w40/mx.png';
+                } else {
+                    flagImg.src = 'https://flagcdn.com/w40/us.png';
                 }
                 
                 // Update all translatable elements
