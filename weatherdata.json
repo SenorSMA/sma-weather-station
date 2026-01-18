@@ -7,7 +7,7 @@
     "batterypercentage": "29"
   },
   "aggregated": {
-    "mintemperature": "24",
+    "mintemperature": "23",
     "maxtemperature": "26",
     "barotrend": "0.2",
     "rainhour": "0.0",
