@@ -38,13 +38,13 @@
             .item-footer { grid-area: footer; padding-left: 0.4em; padding-right: 0.4em; }
 
             table { margin-left:0.4em; }
-            td { font-size: 32pt; padding-right: 15px; padding-bottom: 10px; }
-            .forecast-table td { font-size: 32pt; padding: 10px; background-color:#F6F6F6; }
-            .forecast-weekend-row td { font-size: 32pt; padding: 10px; background-color:#E6E6E6; }
+            td { font-size: 33pt; padding-right: 10px; padding-bottom: 8px; }
+            .forecast-table td { font-size: 33pt; padding: 8px; background-color:#F6F6F6; }
+            .forecast-weekend-row td { font-size: 33pt; padding: 8px; background-color:#E6E6E6; }
             
             #weather-table {
                 border-spacing: 0;
-                width: 90%;
+                width: 95%;
                 margin: 0 auto;
             }
 
@@ -53,7 +53,7 @@
             }
 
             #weather-table td {
-                padding: 12px 15px;
+                padding: 10px 10px;
                 color: #5a4a3a;
                 border: none;
             }
@@ -401,7 +401,10 @@
                         document.getElementById("sun").innerHTML = sun;
 
                         document.getElementById("batterypercentage").innerHTML = jsonObj.weather.batterypercentage=="-"?"-":jsonObj.weather.batterypercentage + " %";
-                        document.getElementById("updated").innerHTML = jsonObj["updated-de"];
+                        
+                        // Store original date for translation
+                        window.originalDate = jsonObj["updated-de"];
+                        document.getElementById("updated").innerHTML = translateDate(jsonObj["updated-de"]);
 
                         if (jsonObj["updated-de"]!="-")
                             if (jsonObj["offline"])
@@ -470,7 +473,37 @@
                 }
             };
 
+            const dayTranslations = {
+                en: { 'Sun': 'Sun', 'Mon': 'Mon', 'Tue': 'Tue', 'Wed': 'Wed', 'Thu': 'Thu', 'Fri': 'Fri', 'Sat': 'Sat' },
+                mx: { 'Sun': 'Dom', 'Mon': 'Lun', 'Tue': 'Mar', 'Wed': 'Mié', 'Thu': 'Jue', 'Fri': 'Vie', 'Sat': 'Sáb' }
+            };
+
+            const monthTranslations = {
+                en: { 'Jan': 'Jan', 'Feb': 'Feb', 'Mar': 'Mar', 'Apr': 'Apr', 'May': 'May', 'Jun': 'Jun', 
+                      'Jul': 'Jul', 'Aug': 'Aug', 'Sep': 'Sep', 'Oct': 'Oct', 'Nov': 'Nov', 'Dec': 'Dec' },
+                mx: { 'Jan': 'Ene', 'Feb': 'Feb', 'Mar': 'Mar', 'Apr': 'Abr', 'May': 'May', 'Jun': 'Jun',
+                      'Jul': 'Jul', 'Aug': 'Ago', 'Sep': 'Sep', 'Oct': 'Oct', 'Nov': 'Nov', 'Dec': 'Dic' }
+            };
+
             let currentLanguage = 'en';
+
+            function translateDate(dateStr) {
+                if (!dateStr || dateStr === '-') return dateStr;
+                
+                let translated = dateStr;
+                
+                // Translate day names
+                for (let [en, local] of Object.entries(dayTranslations[currentLanguage])) {
+                    translated = translated.replace(en, local);
+                }
+                
+                // Translate month names
+                for (let [en, local] of Object.entries(monthTranslations[currentLanguage])) {
+                    translated = translated.replace(en, local);
+                }
+                
+                return translated;
+            }
 
             function toggleLanguage() {
                 // Toggle between English and Spanish
@@ -479,9 +512,9 @@
                 // Update flag image
                 const flagImg = document.getElementById('flag-img');
                 if (currentLanguage === 'en') {
-                    flagImg.src = 'https://flagcdn.com/w40/mx.png';
-                } else {
                     flagImg.src = 'https://flagcdn.com/w40/us.png';
+                } else {
+                    flagImg.src = 'https://flagcdn.com/w40/mx.png';
                 }
                 
                 // Update all translatable elements
@@ -491,6 +524,11 @@
                         element.textContent = translations[currentLanguage][key];
                     }
                 });
+                
+                // Update date translation
+                if (window.originalDate) {
+                    document.getElementById("updated").innerHTML = translateDate(window.originalDate);
+                }
             }
 
             //    one time calls
