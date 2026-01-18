@@ -63,7 +63,7 @@
             }
 
             .banner {
-                background: linear-gradient(135deg, rgba(212, 165, 116, 0.4) 0%, rgba(200, 150, 102, 0.4) 100%);
+                background: linear-gradient(135deg, rgba(212, 165, 116, 0.3) 0%, rgba(200, 150, 102, 0.3) 100%);
                 padding: 30px;
                 border-radius: 15px;
                 box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -99,10 +99,8 @@
                     <h1>SMA Weather</h1>
                     <p>Central Mexico 6,614 ft</p>
                     <div class="language-selector">
-                        <button id="lang-toggle" onclick="toggleLanguage()" style="background: transparent; border: 2px solid #5a4a3a; border-radius: 8px; padding: 5px 10px; cursor: pointer; display: flex; align-items: center; gap: 5px;">
-                            <img src="https://flagcdn.com/w40/us.png" alt="English" style="width: 30px; height: auto;">
-                            <span style="color: #5a4a3a; font-size: 16pt;">/</span>
-                            <img src="https://flagcdn.com/w40/mx.png" alt="Español" style="width: 30px; height: auto;">
+                        <button id="lang-toggle" onclick="toggleLanguage()" style="background: transparent; border: 2px solid #5a4a3a; border-radius: 8px; padding: 5px; cursor: pointer; display: flex; align-items: center; justify-content: center; width: 50px; height: 40px;">
+                            <img id="flag-img" src="https://flagcdn.com/w40/us.png" alt="Language" style="width: 30px; height: auto;">
                         </button>
                     </div>
                 </div>
@@ -473,6 +471,14 @@
             function toggleLanguage() {
                 // Toggle between English and Spanish
                 currentLanguage = (currentLanguage === 'en') ? 'mx' : 'en';
+                
+                // Update flag image
+                const flagImg = document.getElementById('flag-img');
+                if (currentLanguage === 'en') {
+                    flagImg.src = 'https://flagcdn.com/w40/us.png';
+                } else {
+                    flagImg.src = 'https://flagcdn.com/w40/mx.png';
+                }
                 
                 // Update all translatable elements
                 document.querySelectorAll('[data-translate]').forEach(element => {
