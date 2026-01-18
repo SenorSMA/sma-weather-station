@@ -61,65 +61,122 @@
             #weather-table td:last-child {
                 text-align: right;
             }
+
+            .banner {
+                background: linear-gradient(135deg, #d4a574 0%, #c89666 100%);
+                padding: 30px;
+                border-radius: 15px;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                margin-bottom: 20px;
+                position: relative;
+            }
+
+            .banner h1 {
+                font-size: 135%;
+                color: #5a4a3a;
+                margin: 0 0 10px 0;
+                text-align: center;
+            }
+
+            .banner p {
+                font-size: 60%;
+                color: #5a4a3a;
+                margin: 0;
+                text-align: center;
+            }
+
+            .language-selector {
+                position: absolute;
+                top: 30px;
+                right: 30px;
+                display: flex;
+                gap: 10px;
+            }
+
+            .flag {
+                width: 40px;
+                height: auto;
+                cursor: pointer;
+                opacity: 0.5;
+                transition: opacity 0.3s;
+                border: 2px solid transparent;
+                border-radius: 4px;
+            }
+
+            .flag:hover {
+                opacity: 0.8;
+            }
+
+            .flag.active {
+                opacity: 1;
+                border: 2px solid #5a4a3a;
+            }
         </style>
     </head>
     <body>
         <div class="layout">
             <div class="item-header">
-                <center><h1 style="font-size: 135%; color:#5a4a3a">SMA Weather</h1></center>
-                <center><h3 style="font-size: 60%; color: #5a4a3a; margin-top: -15px;">Central Mexico 6,614 ft</h3></center>
+                <div class="banner">
+                    <h1>SMA Weather</h1>
+                    <p>Central Mexico 6,614 ft</p>
+                    <div class="language-selector">
+                        <img src="https://flagcdn.com/w40/us.png" alt="English" id="lang-en" class="flag active" onclick="changeLanguage('en')">
+                        <img src="https://flagcdn.com/w40/es.png" alt="Español" id="lang-es" class="flag" onclick="changeLanguage('es')">
+                        <img src="https://flagcdn.com/w40/mx.png" alt="Español (MX)" id="lang-mx" class="flag" onclick="changeLanguage('mx')">
+                    </div>
+                </div>
                 <p id="message" hidden></p>
             </div>
             <div class="item-current">
-                <h3 style="font-size: 72%; text-align: center; color: #5a4a3a;">Current Conditions</h3>
+                <h3 style="font-size: 72%; text-align: center; color: #5a4a3a;" data-translate="current-conditions">Current Conditions</h3>
                 <table id="weather-table">
                      <tr>
                         <td style="text-align:center"><img src="temperature.png" height="80"></td>
-                        <td>Temperature</td>
+                        <td data-translate="temperature">Temperature</td>
                         <td><span id="temperature">-</span></td>
                       </tr>
                      <tr>
                         <td style="text-align:center"><img src="humidity.png" height="80"></td>
-                        <td>Humidity</td>
+                        <td data-translate="humidity">Humidity</td>
                         <td> <span id="humidity">-</span></td>
                       </tr>
                      <tr>
                         <td style="text-align:center"><img src="pressure.png" height="80"></td>
-                        <td>Pressure</td>
+                        <td data-translate="pressure">Pressure</td>
                         <td> <span id="pressure">-</span></td>
                       </tr>
                      <tr>
                         <td style="text-align:center"><img src="rain.png" height="80"></td>
-                        <td>Rain</td>
+                        <td data-translate="rain">Rain</td>
                         <td> <span id="rain">-</span></td>
                       </tr>
                      <tr>
                         <td style="text-align:center"><img src="wind.png" height="80"></td>
-                        <td>Wind</td>
+                        <td data-translate="wind">Wind</td>
                         <td><span id="wind">-</span></td>
                       </tr>
                      <tr>
                         <td style="text-align:center"><img src="battery.png" height="80"></td>
-                        <td>Battery</td>
+                        <td data-translate="battery">Battery</td>
                         <td><span id="batterypercentage">-</span></td>
                       </tr>
                      <tr>
                         <td style="text-align:center"><img src="sun.png" height="80"></td>
-                        <td>Sun</td>
+                        <td data-translate="sun">Sun</td>
                         <td><span id="sun">-</span></td>
                       </tr>
                      <tr>
                         <td style="text-align:center"><img src="updated.png" height="80"></td>
-                        <td>Date/Time</td>
+                        <td data-translate="datetime">Date/Time</td>
                         <td><span id="updated">-</span> <span id="offline"></span></td>
                       </tr>
                 </table>
             </div>
             <div class="item-forecast" id="item_forecast" hidden>
-                <h3>Forecast</h3>
+                <h3 data-translate="forecast">Forecast</h3>
                 <table id="forecast-table" class="forecast-table">
                 </table>
-                <p><em>Data from <span id="station">-</span> (<a target="_blank" rel="noopener noreferrer" href="http://openweathermap.org">openweathermap.org</a>)</em></p>
+                <p><em data-translate="data-from">Data from</em> <span id="station">-</span> (<a target="_blank" rel="noopener noreferrer" href="http://openweathermap.org">openweathermap.org</a>)</p>
             </div>
             <div class="item-footer">
                 <p style="font-size: 40%; text-align: center; color: #5a4a3a;">&copy; 2026 SMA Weather</p>
@@ -398,6 +455,69 @@
                 }
                 getWeatherData();
                 getForecastData();
+            }
+
+            // Language translations
+            const translations = {
+                en: {
+                    'current-conditions': 'Current Conditions',
+                    'temperature': 'Temperature',
+                    'humidity': 'Humidity',
+                    'pressure': 'Pressure',
+                    'rain': 'Rain',
+                    'wind': 'Wind',
+                    'battery': 'Battery',
+                    'sun': 'Sun',
+                    'datetime': 'Date/Time',
+                    'forecast': 'Forecast',
+                    'data-from': 'Data from'
+                },
+                es: {
+                    'current-conditions': 'Condiciones Actuales',
+                    'temperature': 'Temperatura',
+                    'humidity': 'Humedad',
+                    'pressure': 'Presión',
+                    'rain': 'Lluvia',
+                    'wind': 'Viento',
+                    'battery': 'Batería',
+                    'sun': 'Sol',
+                    'datetime': 'Fecha/Hora',
+                    'forecast': 'Pronóstico',
+                    'data-from': 'Datos de'
+                },
+                mx: {
+                    'current-conditions': 'Condiciones Actuales',
+                    'temperature': 'Temperatura',
+                    'humidity': 'Humedad',
+                    'pressure': 'Presión',
+                    'rain': 'Lluvia',
+                    'wind': 'Viento',
+                    'battery': 'Batería',
+                    'sun': 'Sol',
+                    'datetime': 'Fecha/Hora',
+                    'forecast': 'Pronóstico',
+                    'data-from': 'Datos de'
+                }
+            };
+
+            let currentLanguage = 'en';
+
+            function changeLanguage(lang) {
+                currentLanguage = lang;
+                
+                // Update active flag
+                document.querySelectorAll('.flag').forEach(flag => {
+                    flag.classList.remove('active');
+                });
+                document.getElementById('lang-' + lang).classList.add('active');
+                
+                // Update all translatable elements
+                document.querySelectorAll('[data-translate]').forEach(element => {
+                    const key = element.getAttribute('data-translate');
+                    if (translations[lang] && translations[lang][key]) {
+                        element.textContent = translations[lang][key];
+                    }
+                });
             }
 
             //    one time calls
