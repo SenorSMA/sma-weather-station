@@ -2,9 +2,9 @@
   "weather": {
     "temperature": "18.8",
     "humidity": "46",
-    "pressure": "804.88",
+    "pressure": "804.93",
     "winddirection": "NNE",
-    "batterypercentage": "28"
+    "batterypercentage": "26"
   },
   "aggregated": {
     "mintemperature": "19",
@@ -21,8 +21,8 @@
   },
   "sun": {
     "azimuth": "255",
-    "inclination": "-19"
+    "inclination": "-20"
   },
-  "updated-de": "Sun, Jan 18, 07:48 PM",
+  "updated-de": "Sun, Jan 18, 07:49 PM",
   "offline": false
 }
