@@ -9,7 +9,7 @@
   "aggregated": {
     "mintemperature": "18",
     "maxtemperature": "18",
-    "barotrend": "-0.1",
+    "barotrend": "-0.2",
     "rainhour": "0.0",
     "rainday": "0.0",
     "windmps": "0.0",
@@ -23,6 +23,6 @@
     "azimuth": "272",
     "inclination": "-81"
   },
-  "updated-de": "Mon, Jan 19, 12:15 AM",
+  "updated-de": "Mon, Jan 19, 12:16 AM",
   "offline": false
 }
