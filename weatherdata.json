@@ -1,15 +1,15 @@
 {
   "weather": {
-    "temperature": "17.2",
+    "temperature": "17.3",
     "humidity": "44",
-    "pressure": "805.13",
+    "pressure": "805.15",
     "winddirection": "NNE",
     "batterypercentage": "15"
   },
   "aggregated": {
     "mintemperature": "17",
     "maxtemperature": "18",
-    "barotrend": "-0.1",
+    "barotrend": "-0.0",
     "rainhour": "0.0",
     "rainday": "0.0",
     "windmps": "0.0",
