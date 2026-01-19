@@ -1,10 +1,10 @@
 {
   "weather": {
-    "temperature": "21.1",
-    "humidity": "44",
-    "pressure": "803.61",
+    "temperature": "21.0",
+    "humidity": "45",
+    "pressure": "803.64",
     "winddirection": "NNE",
-    "batterypercentage": "27"
+    "batterypercentage": "28"
   },
   "aggregated": {
     "mintemperature": "21",
