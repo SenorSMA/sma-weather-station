@@ -4,7 +4,7 @@
     "humidity": "47",
     "pressure": "805.06",
     "winddirection": "NNE",
-    "batterypercentage": "12"
+    "batterypercentage": "10"
   },
   "aggregated": {
     "mintemperature": "17",
