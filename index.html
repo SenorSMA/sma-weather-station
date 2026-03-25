@@ -1,553 +1,410 @@
 <html>
-    <head>
-        <meta charset="utf-8" />
-        <title>SMA Weather</title>
-        
-        <!-- Favicons and App Icons -->
-        <link rel="icon" type="image/svg+xml" href="favicon.svg">
-        <link rel="apple-touch-icon" href="apple-touch-icon.svg">
-        <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.svg">
-        
-        <style>
-            body {
-                background-image: linear-gradient(rgba(240, 221, 180, 0.90), rgba(240, 221, 180, 0.65)), url('aztec-background.jpg');
-                background-size: cover;
-                background-position: center;
-                background-repeat: no-repeat;
-                background-attachment: fixed;
-                font-family: 'Bodoni MT', Didot, 'Didot LT STD', 'Book Antiqua', Georgia, serif;
-                font-size: 32pt;
-                color: #000000;
-            }
-            
-            button { border: none; color: white; padding: 10px 16px; text-align: center; text-decoration: none; display: inline-block; font-size: 36pt; }
-            ol { margin-left: 20pt; }
-            .h3-style { font-size: 36pt; font-weight: bold;}
-            .layout {
-                display: grid;
-                grid-template-rows: auto;
-                grid-template-columns: 100%;
-                grid-template-areas:
-                    "header"
-                    "current"
-                    "forecast"
-                    "footer";
-                grid-gap: 10px;
-            }
+<head>
+    <meta charset="utf-8" />
+    <title>SMA Weather Station</title>
+   
+   <!-- Favicons and App Icons -->
+          <link rel="icon" type="image/svg+xml" href="favicon.svg">
+          <link rel="apple-touch-icon" href="apple-touch-icon.svg">
+          <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.svg">
+              
+    <style>
+        body {
+            background-color: #C4B5A8;
+            background-image: linear-gradient(rgba(196, 181, 168, 0.65), rgba(196, 181, 168, 0.40)), url('aztec-background.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            font-family: Georgia, 'Times New Roman', serif;
+            font-size: 27pt;
+            color: #3D3630;
+        }
 
-            option { font-family: Arial, Helvetica, Sans-Serif; font-size: 32pt; }
-            selection { font-family: Arial, Helvetica, Sans-Serif; font-size: 32pt; }
+        .title-banner {
+            background-color: rgba(204, 85, 0, 0.32);
+            padding: 25px 0;
+            border-radius: 14px;
+            margin: 0 1.5em;
+        }
 
-            .item-header { grid-area: header; padding-top: 0.5em; padding-left: 0.4em; padding-right: 0.4em; }
-            .item-current { grid-area: current; padding-left: 0.4em; padding-right: 0.4em; }
-            .item-forecast { grid-area: forecast; padding-left: 0.4em; padding-right: 0.4em; }
-            .item-footer { grid-area: footer; padding-left: 0.4em; padding-right: 0.4em; }
+        #lang-toggle {
+            position: absolute;
+            right: 65px;
+            top: 45px;
+            background-color: transparent;
+            border: none;
+            font-size: 28pt;
+            cursor: pointer;
+            padding: 0;
+            line-height: 1;
+        }
 
-            table { margin-left:0.4em; }
-            td { font-size: 33pt; padding-right: 10px; padding-bottom: 8px; }
-            .forecast-table td { font-size: 33pt; padding: 8px; background-color:#F6F6F6; }
-            .forecast-weekend-row td { font-size: 33pt; padding: 8px; background-color:#E6E6E6; }
-            
-            #weather-table {
-                border-spacing: 0;
-                width: 95%;
-                margin: 0 auto;
-            }
+        .layout {
+            display: grid;
+            grid-template-rows: auto;
+            grid-template-columns: 100%;
+            grid-template-areas:
+                "header"
+                "current"
+                "forecast"
+                "footer";
+            grid-gap: 10px;
+        }
 
-            #weather-table tr {
-                border-bottom: none;
-            }
+        .item-header   { grid-area: header;   padding-top: 1em; position: relative; }
+        .item-current  { grid-area: current;  padding-left: 2em; padding-right: 2em; }
+        .item-forecast { grid-area: forecast; padding-left: 2em; padding-right: 2em; }
+        .item-footer   { grid-area: footer;   padding-left: 2em; padding-right: 2em; }
 
-            #weather-table td {
-                padding: 10px 10px;
-                color: #5a4a3a;
-                border: none;
-            }
-            
-            #weather-table td:last-child {
-                text-align: right;
-                font-size: 34pt;
-            }
+        table { margin-left: 2em; }
+        td { font-size: 27pt; padding-right: 20px; padding-bottom: 10px; }
+        .forecast-table td        { font-size: 27pt; padding: 10px; background-color: #F6F6F6; }
+        .forecast-weekend-row td  { font-size: 27pt; padding: 10px; background-color: #E6E6E6; }
 
-            .banner {
-                background: linear-gradient(135deg, rgba(212, 165, 116, 0.3) 0%, rgba(200, 150, 102, 0.3) 100%);
-                padding: 20px;
-                border-radius: 15px;
-                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-                margin-bottom: 20px;
-                position: relative;
-            }
+        #weather-table {
+            border-spacing: 0;
+            width: 90%;
+            margin: 0 auto;
+        }
 
-            .banner h1 {
-                font-size: 135%;
-                color: #5a4a3a;
-                margin: 0 0 10px 0;
-                text-align: center;
-            }
+        #weather-table td:last-child { text-align: right; }
+    </style>
+</head>
 
-            .banner p {
-                font-size: 60%;
-                color: #5a4a3a;
-                margin: 0;
-                text-align: center;
-            }
+<body>
+    <div class="layout">
 
-            .language-selector {
-                position: absolute;
-                top: 20px;
-                right: 20px;
-            }
-        </style>
-    </head>
-    <body>
-        <div class="layout">
-            <div class="item-header">
-                <div class="banner">
-                    <h1 data-translate="title">SMA Weather</h1>
-                    <p data-translate="subtitle">Central Mexico 6,614 ft</p>
-                    <div class="language-selector">
-                        <button id="lang-toggle" onclick="toggleLanguage()" style="background: transparent; border: 2px solid #5a4a3a; border-radius: 8px; padding: 5px; cursor: pointer; display: flex; align-items: center; justify-content: center; width: 50px; height: 40px;">
-                            <img id="flag-img" src="https://flagcdn.com/w40/us.png" alt="Language" style="width: 30px; height: auto;">
-                        </button>
-                    </div>
-                </div>
-                <p id="message" hidden></p>
+        <div class="item-header">
+            <!-- Flag shows the language you can switch TO, not the current language -->
+            <button id="lang-toggle" onclick="toggleLanguage()">🇺🇸</button>
+
+            <div class="title-banner">
+                <center><h1 id="title-main" style="font-size: 135%; color:#5a4a3a">SMA Weather</h1></center>
+                <center><h3 id="title-sub" style="font-size: 60%; color:#5a4a3a; margin-top: -15px;">Central Mexico 6,614 ft</h3></center>
             </div>
-            <div class="item-current">
-                <h3 style="font-size: 72%; text-align: center; color: #5a4a3a; margin-bottom: 2em;" data-translate="current-conditions">Current Conditions</h3>
-                <table id="weather-table">
-                     <tr>
-                        <td style="text-align:center"><img src="temperature.png" height="80"></td>
-                        <td data-translate="temperature">Temperature</td>
-                        <td><span id="temperature">-</span></td>
-                      </tr>
-                     <tr>
-                        <td style="text-align:center"><img src="humidity.png" height="80"></td>
-                        <td data-translate="humidity">Humidity</td>
-                        <td> <span id="humidity">-</span></td>
-                      </tr>
-                     <tr>
-                        <td style="text-align:center"><img src="pressure.png" height="80"></td>
-                        <td data-translate="pressure">Pressure</td>
-                        <td> <span id="pressure">-</span></td>
-                      </tr>
-                     <tr>
-                        <td style="text-align:center"><img src="rain.png" height="80"></td>
-                        <td data-translate="rain">Rain</td>
-                        <td> <span id="rain">-</span></td>
-                      </tr>
-                     <tr>
-                        <td style="text-align:center"><img src="wind.png" height="80"></td>
-                        <td data-translate="wind">Wind</td>
-                        <td><span id="wind">-</span></td>
-                      </tr>
-                     <tr>
-                        <td style="text-align:center"><img src="battery.png" height="80"></td>
-                        <td data-translate="battery">Battery</td>
-                        <td><span id="batterypercentage">-</span></td>
-                      </tr>
-                     <tr>
-                        <td style="text-align:center"><img src="sun.png" height="80"></td>
-                        <td data-translate="sun">Sun</td>
-                        <td><span id="sun">-</span></td>
-                      </tr>
-                     <tr>
-                        <td style="text-align:center"><img src="updated.png" height="80"></td>
-                        <td data-translate="datetime">Date/Time</td>
-                        <td><span id="updated">-</span> <span id="offline"></span></td>
-                      </tr>
-                </table>
-            </div>
-            <div class="item-forecast" id="item_forecast" hidden>
-                <h3 data-translate="forecast">Forecast</h3>
-                <table id="forecast-table" class="forecast-table">
-                </table>
-                <p><em data-translate="data-from">Data from</em> <span id="station">-</span> (<a target="_blank" rel="noopener noreferrer" href="http://openweathermap.org">openweathermap.org</a>)</p>
-            </div>
-            <div class="item-footer">
-                <p style="font-size: 40%; text-align: center; color: #5a4a3a;">&copy; 2026 SMA Weather</p>
-            </div>
+
+            <p id="message" hidden></p>
         </div>
 
-        <script>
+        <div class="item-current">
+            <h3 id="current-header" style="font-size: 72%; text-align: center; color: #5a4a3a;">Current Conditions</h3>
+            <table id="weather-table">
+                <tr><td style="text-align:center"><img src="temperature.png" height="80"></td><td id="lbl-temp">Temperature (°F)</td><td><span id="temperature">-</span></td></tr>
+                <tr><td style="text-align:center"><img src="humidity.png" height="80"></td><td id="lbl-humidity">Humidity (%rH)</td><td><span id="humidity">-</span></td></tr>
+                <tr><td style="text-align:center"><img src="pressure.png" height="80"></td><td id="lbl-pressure">Pressure (inHg)</td><td><span id="pressure">-</span></td></tr>
+                <tr><td style="text-align:center"><img src="rain.png" height="80"></td><td id="lbl-rain">Rain (mm)</td><td><span id="rain">-</span></td></tr>
+                <tr><td style="text-align:center"><img src="wind.png" height="80"></td><td id="lbl-wind">Wind (mph)</td><td><span id="wind">-</span></td></tr>
+                <tr><td style="text-align:center"><img src="battery.png" height="80"></td><td id="lbl-battery">Battery</td><td><span id="batterypercentage">-</span></td></tr>
+                <tr><td style="text-align:center"><img src="sun.png" height="80"></td><td id="lbl-sun">Sun</td><td><span id="sun">-</span></td></tr>
+                <tr><td style="text-align:center"><img src="updated.png" height="80"></td><td id="lbl-updated">Date/Time</td><td><span id="updated">-</span> <span id="offline"></span></td></tr>
+            </table>
+        </div>
 
-            let windDirectionsArray = [ ['N', 'North'], ['NNE', 'North-Northeast'], ['NE', 'Northeast'], ['ENE', 'East-Northeast'],
-                    ['E', 'East'], ['ESE', 'East-Southeast'], ['SE', 'Southeast'], ['SSE', 'South-Southeast'],
-                    ['S', 'South'], ['SSW', 'South-Southwest'], ['SW', 'Southwest'], ['WSW', 'West-Southwest'],
-                    ['W', 'West'], ['WNW', 'West-Northwest'], ['NW', 'Northwest'], ['NNW', 'North-Northwest'] ];
+        <div class="item-forecast" id="item_forecast" hidden>
+            <h3 id="forecast-header">Forecast</h3>
+            <table id="forecast-table" class="forecast-table"></table>
+            <p><em><span id="lbl-datafrom">Data from</span> <span id="station">-</span> (<a target="_blank" rel="noopener noreferrer" href="http://openweathermap.org">openweathermap.org</a>)</em></p>
+        </div>
 
-            let windDirections = new Map(windDirectionsArray);
+        <div class="item-footer">
+            <p id="footer-text" style="font-size: 40%; text-align: center; color: #5a4a3a;">© 2026 SMA Weather</p>
+        </div>
+    </div>
 
-            let windSpeedUnit = "mph";
+<script>
+    /* ── LANGUAGE SYSTEM ── */
+    let currentLang = "en";
 
-            const coloredtemperatures = true;
-            const forcasttabled = true;
+    const translations = {
+        en: {
+            titleMain:    "SMA Weather",
+            titleSub:     "Central Mexico 6,614 ft",
+            current:      "Current Conditions",
+            forecast:     "Forecast",
+            temp:         "Temperature (°F)",
+            humidity:     "Humidity (%rH)",
+            pressure:     "Pressure (inHg)",
+            rain:         "Rain (mm)",
+            wind:         "Wind (mph)",
+            battery:      "Battery",
+            sun:          "Sun",
+            updated:      "Date/Time",
+            dataFrom:     "Data from",
+            footer:       "© 2026 SMA Weather",
+            toggleButton: "🇲🇽",
+            today:        "Today",
+            tomorrow:     "Tomorrow"
+        },
+        es: {
+            titleMain:    "Clima SMA",
+            titleSub:     "México Central 6,614 pies",
+            current:      "Condiciones Actuales",
+            forecast:     "Pronóstico",
+            temp:         "Temperatura (°F)",
+            humidity:     "Humedad (%rH)",
+            pressure:     "Presión (inHg)",
+            rain:         "Lluvia (mm)",
+            wind:         "Viento (mph)",
+            battery:      "Batería",
+            sun:          "Sol",
+            updated:      "Fecha/Hora",
+            dataFrom:     "Datos de",
+            footer:       "© 2026 Clima SMA",
+            toggleButton: "🇺🇸",
+            today:        "Hoy",
+            tomorrow:     "Mañana"
+        }
+    };
 
-            function getForecastDataWithConfiguration(latitude, longitude, numdays, apikey) {
-                var xhttp = new XMLHttpRequest();
-                xhttp.onreadystatechange = function() {
-                    if (this.readyState == 4 && this.status == 200) {
+    function applyLanguage() {
+        const t = translations[currentLang];
+        document.getElementById("title-main").innerText    = t.titleMain;
+        document.getElementById("title-sub").innerText     = t.titleSub;
+        document.getElementById("current-header").innerText = t.current;
+        document.getElementById("forecast-header").innerText = t.forecast;
+        document.getElementById("lbl-temp").innerHTML      = t.temp;
+        document.getElementById("lbl-humidity").innerHTML  = t.humidity;
+        document.getElementById("lbl-pressure").innerHTML  = t.pressure;
+        document.getElementById("lbl-rain").innerHTML      = t.rain;
+        document.getElementById("lbl-wind").innerHTML      = t.wind;
+        document.getElementById("lbl-battery").innerHTML   = t.battery;
+        document.getElementById("lbl-sun").innerHTML       = t.sun;
+        document.getElementById("lbl-updated").innerHTML   = t.updated;
+        document.getElementById("lbl-datafrom").innerHTML  = t.dataFrom;
+        document.getElementById("footer-text").innerHTML   = t.footer;
+        document.getElementById("lang-toggle").innerText   = t.toggleButton;
+    }
 
-                        var jsonObj = JSON.parse(this.responseText);
+    function toggleLanguage() {
+        currentLang = currentLang === "en" ? "es" : "en";
+        applyLanguage();
+    }
 
-                        var table = "";
+    applyLanguage();
 
-                        const dateoptions = { weekday: 'short', day: 'numeric' };
-                        const todaydate = new Date();
-                        const todaydatestr = todaydate.toLocaleDateString('en-US', dateoptions);
-                        const tomorrowdate = new Date();
-                        tomorrowdate.setDate(tomorrowdate.getDate() + 1);
-                        const tomorrowdatestr = tomorrowdate.toLocaleDateString('en-US', dateoptions);
+    /* ── WEATHER DATA ── */
+    let windDirectionsArray = [
+        ['N','North'],['NNE','North-Northeast'],['NE','Northeast'],['ENE','East-Northeast'],
+        ['E','East'],['ESE','East-Southeast'],['SE','Southeast'],['SSE','South-Southeast'],
+        ['S','South'],['SSW','South-Southwest'],['SW','Southwest'],['WSW','West-Southwest'],
+        ['W','West'],['WNW','West-Northwest'],['NW','Northwest'],['NNW','North-Northwest']
+    ];
+    let windDirections = new Map(windDirectionsArray);
+    let windSpeedUnit  = "mph";
+    const coloredtemperatures = true;
 
-                        document.getElementById("station").innerHTML = jsonObj.city.name;
+    function getForecastDataWithConfiguration(latitude, longitude, numdays, apikey) {
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                var jsonObj = JSON.parse(this.responseText);
+                var table = "";
+                const dateoptions    = { weekday: 'short', day: 'numeric' };
+                const todaydate      = new Date();
+                const todaydatestr   = todaydate.toLocaleDateString('en-US', dateoptions);
+                const tomorrowdate   = new Date();
+                tomorrowdate.setDate(tomorrowdate.getDate() + 1);
+                const tomorrowdatestr = tomorrowdate.toLocaleDateString('en-US', dateoptions);
+                const t = translations[currentLang];
 
-                        for (let i = 0; i < jsonObj.list.length; i++) {
+                document.getElementById("station").innerHTML = jsonObj.city.name;
 
-                            var datestr = new Date(jsonObj.list[i].dt*1000).toLocaleDateString('en-US', dateoptions);
-                            var dayofweek = new Date(jsonObj.list[i].dt*1000).getDay();
+                for (let i = 0; i < jsonObj.list.length; i++) {
+                    var datestr  = new Date(jsonObj.list[i].dt*1000).toLocaleDateString('en-US', dateoptions);
+                    var dayofweek = new Date(jsonObj.list[i].dt*1000).getDay();
 
-                            if (datestr==todaydatestr)
-                                datestr = "Today";
-                            else if (datestr==tomorrowdatestr)
-                                datestr = "Tomorrow";
+                    if (datestr == todaydatestr)        datestr = t.today;
+                    else if (datestr == tomorrowdatestr) datestr = t.tomorrow;
 
-                            table += (dayofweek==0||dayofweek==6)?"<tr class='forecast-weekend-row'>":"<tr>";
-                            table += "<td><nobr>" + datestr + "</nobr></td>";
+                    table += (dayofweek==0||dayofweek==6) ? "<tr class='forecast-weekend-row'>" : "<tr>";
+                    table += "<td><nobr>" + datestr + "</nobr></td>";
 
-                            if (jsonObj.list[i].weather[0].icon.endsWith("d"))
-                                table += "<td><img src='WeatherIcon" + jsonObj.list[i].weather[0].icon + ".png' height='80'></td>";
-                            else
-                                table += "<td><img src='WeatherIcon" + jsonObj.list[i].weather[0].icon.slice(0, -1) + "d.png' height='80'></td>";
+                    if (jsonObj.list[i].weather[0].icon.endsWith("d"))
+                        table += "<td><img src='WeatherIcon" + jsonObj.list[i].weather[0].icon + ".png' height='80'></td>";
+                    else
+                        table += "<td><img src='WeatherIcon" + jsonObj.list[i].weather[0].icon.slice(0,-1) + "d.png' height='80'></td>";
 
-                            var temp = "-";
-                            temp = ((jsonObj.list[i].temp.max * 9/5) + 32).toFixed(0) + "/" + ((jsonObj.list[i].temp.min * 9/5) + 32).toFixed(0) + " &#8457;";
-                            table += "<td><nobr>" + temp + "</nobr></td>";
+                    var temp = ((jsonObj.list[i].temp.max * 9/5) + 32).toFixed(0) + "/" +
+                               ((jsonObj.list[i].temp.min * 9/5) + 32).toFixed(0) + " &#8457;";
+                    table += "<td><nobr>" + temp + "</nobr></td>";
 
-                            var windspeed = "-";
-                            var windspeedval = jsonObj.list[i].speed;
-                            switch(windSpeedUnit) {
-                                case "mph":
-                                    if (windspeedval!="-")
-                                        windspeed = (windspeedval * 2.23694).toFixed(1) + " mph";
-                                    break;
-                                case "m/s":
-                                    if (windspeedval!="-")
-                                        windspeed = windspeedval.toFixed(1) + " <sup>m</sup>&frasl;<sub>s</sub>";
-                                    break;
-                                case "kn":
-                                    if (windspeedval!="-")
-                                        windspeed = (windspeedval * 1.94384).toFixed(1) + " kn";
-                                    break;
-                            }
-
-                            if (jsonObj.list[i].deg!="-") {
-                                windspeed += " <img src='wind";
-                                var winddeg = jsonObj.list[i].deg;
-                                var windabbr = [ 'N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW' ];
-                                var windindex = Math.round(((winddeg %= 360) < 0 ? winddeg + 360 : winddeg) / 22.5) % 16;
-                                windspeed += windabbr[windindex] + ".png' height='32'> <nobr>" + windabbr[windindex] + "</nobr>";
-                            }
-
-                            table += "<td>" + windspeed + "</td>";
-
-                            var rain = "-";
-                            if (jsonObj.list[i].rain!=undefined)
-                                rain = jsonObj.list[i].rain.toFixed(1) + " mm";
-                            if (rain!="-")
-                                table += "<td><img src='raindrop.png' height='40' style='vertical-align:middle'> " + rain + "</td>";
-                            else
-                                table += "<td>" + rain + "</td>";
-
-                            table += "</tr>\n";
+                    var windspeed = "-";
+                    var windspeedval = jsonObj.list[i].speed;
+                    if (windspeedval != "-") {
+                        switch(windSpeedUnit) {
+                            case "mph": windspeed = (windspeedval * 2.23694).toFixed(1) + " mph"; break;
+                            case "m/s": windspeed = windspeedval.toFixed(1) + " <sup>m</sup>&frasl;<sub>s</sub>"; break;
+                            case "kn":  windspeed = (windspeedval * 1.94384).toFixed(1) + " kn"; break;
                         }
-
-                        document.getElementById("forecast-table").innerHTML = table;
-                        document.getElementById("item_forecast").hidden = false;
                     }
-                };
 
-                xhttp.open("GET", "https://api.openweathermap.org/data/2.5/forecast/daily?lat=" + latitude + "&lon=" + longitude + "&cnt=" + numdays + "&appid=" + apikey + "&units=metric", true);
-                xhttp.send();
-            }
-
-            function getForecastData() {
-                var xhttp = new XMLHttpRequest();
-                xhttp.onreadystatechange = function() {
-                    if (this.readyState == 4 && this.status == 200) {
-                        var jsonObj = JSON.parse(this.responseText);
-                        if (jsonObj.latitude==undefined||jsonObj.latitude==0)
-                            document.getElementById("item_forecast").hidden = true;
-                        else
-                            getForecastDataWithConfiguration(jsonObj.latitude, jsonObj.longitude, jsonObj.numdays, jsonObj.apikey);
+                    if (jsonObj.list[i].deg != "-") {
+                        var winddeg   = jsonObj.list[i].deg;
+                        var windabbr  = ['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSW','SW','WSW','W','WNW','NW','NNW'];
+                        var windindex = Math.round(((winddeg %= 360) < 0 ? winddeg + 360 : winddeg) / 22.5) % 16;
+                        windspeed += " <img src='wind" + windabbr[windindex] + ".png' height='32'> <nobr>" + windabbr[windindex] + "</nobr>";
                     }
-                };
-                xhttp.open("GET", "forecast-configuration.json", true);
-                xhttp.send();
+                    table += "<td>" + windspeed + "</td>";
+
+                    var rain = "-";
+                    if (jsonObj.list[i].rain != undefined)
+                        rain = jsonObj.list[i].rain.toFixed(1) + " mm";
+                    table += rain != "-"
+                        ? "<td><img src='raindrop.png' height='40' style='vertical-align:middle'> " + rain + "</td>"
+                        : "<td>" + rain + "</td>";
+
+                    table += "</tr>\n";
+                }
+                document.getElementById("forecast-table").innerHTML = table;
+                document.getElementById("item_forecast").hidden = false;
             }
+        };
+        xhttp.open("GET", "https://api.openweathermap.org/data/2.5/forecast/daily?lat=" + latitude +
+            "&lon=" + longitude + "&cnt=" + numdays + "&appid=" + apikey + "&units=metric", true);
+        xhttp.send();
+    }
 
-            function getWeatherData() {
-                var xhttp = new XMLHttpRequest();
-                xhttp.onreadystatechange = function() {
-                    if (this.readyState == 4 && this.status == 200) {
-                        var response = JSON.parse(this.responseText);
-                        // JSONBin wraps the data in a 'record' object
-                        var jsonObj = response.record || response;
+    function getForecastData() {
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                var jsonObj = JSON.parse(this.responseText);
+                if (jsonObj.latitude == undefined || jsonObj.latitude == 0)
+                    document.getElementById("item_forecast").hidden = true;
+                else
+                    getForecastDataWithConfiguration(jsonObj.latitude, jsonObj.longitude, jsonObj.numdays, jsonObj.apikey);
+            }
+        };
+        xhttp.open("GET", "forecast-configuration.json", true);
+        xhttp.send();
+    }
 
-                        if (jsonObj.message!=undefined&&jsonObj.message!="")
-                            document.getElementById("message").innerHTML = jsonObj.message;
+    function getWeatherData() {
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+                var response = JSON.parse(this.responseText);
+                var jsonObj  = response.record || response;
+
+                if (jsonObj.message != undefined && jsonObj.message != "")
+                    document.getElementById("message").innerHTML = jsonObj.message;
+                else
+                    document.getElementById("message").hidden = true;
+
+                var temperature = "-";
+                if (jsonObj.weather.temperature != "-") {
+                    var tempF = (parseFloat(jsonObj.weather.temperature) * 9/5 + 32).toFixed(1);
+                    temperature = tempF + " &#8457;";
+                    if (jsonObj.aggregated.mintemperature != "-" && jsonObj.aggregated.maxtemperature != "-") {
+                        var minF = (parseFloat(jsonObj.aggregated.mintemperature) * 9/5 + 32).toFixed(0);
+                        var maxF = (parseFloat(jsonObj.aggregated.maxtemperature) * 9/5 + 32).toFixed(0);
+                        if (coloredtemperatures)
+                            temperature += " (<span style='color:#5b7c99'>&mapstodown;" + minF + "</span> <span style='color:#b85042'>&mapstoup;" + maxF + "</span>)";
                         else
-                            document.getElementById("message").hidden = true;
-
-                        var temperature = "-";
-
-                        if (jsonObj.weather.temperature!="-") {
-                            var tempF = (parseFloat(jsonObj.weather.temperature) * 9/5 + 32).toFixed(1);
-                            temperature = tempF + " &#8457;";
-
-                            if (jsonObj.aggregated.mintemperature!="-"&&jsonObj.aggregated.maxtemperature!="-") {
-                                var minF = (parseFloat(jsonObj.aggregated.mintemperature) * 9/5 + 32).toFixed(0);
-                                var maxF = (parseFloat(jsonObj.aggregated.maxtemperature) * 9/5 + 32).toFixed(0);
-                                if (coloredtemperatures) {
-                                    temperature = temperature + " (<span style='color:#5b7c99'>&mapstodown;" + minF + "</span> <span style='color:#b85042'>&mapstoup;" + maxF + "</span>)"
-
-                                } else {
-                                    temperature = temperature + " (&mapstodown;" + minF + " &mapstoup;"  + maxF + ")"
-                                }
-                            }
-                        }
-                        document.getElementById("temperature").innerHTML = temperature;
-
-                        document.getElementById("humidity").innerHTML = jsonObj.weather.humidity=="-"?"-":jsonObj.weather.humidity + " %rH";
-
-                        var pressure = "-";
-
-                        if (jsonObj.weather.pressure!="-") {
-                            var pressureInHg = (parseFloat(jsonObj.weather.pressure) * 0.02953).toFixed(2);
-                            pressure = pressureInHg + " inHg"
-                            if (jsonObj.aggregated.barotrend!="-") {
-                                if (jsonObj.aggregated.barotrend>1)
-                                    pressure = pressure + " rising";
-                                else if (jsonObj.aggregated.barotrend<-1)
-                                    pressure = pressure + " falling";
-                            }
-                        }
-                        document.getElementById("pressure").innerHTML = pressure;
-
-                        var rain = "-";
-
-                        if (jsonObj.aggregated.rainhour=="-")
-                            rain = "-";
-                        else {
-                            rain = jsonObj.aggregated.rainhour + " <sup>mm</sup>&frasl;<sub>h</sub>";
-
-                            if (jsonObj.aggregated.rainday!="-")
-                                rain = rain + ", " + jsonObj.aggregated.rainday + " <sup>mm</sup>&frasl;<sub>day</sub>";
-                        }
-                        document.getElementById("rain").innerHTML = rain;
-
-                        var wind = "-";
-
-                        if (jsonObj.aggregated.windmps=="-")
-                            if (jsonObj.weather.winddirection=="-")
-                                wind = "-";
-                            else
-                                wind = jsonObj.weather.winddirection;
-                        else {
-                            switch(windSpeedUnit) {
-                                case "mph":
-                                    if (jsonObj.aggregated.windmph!="-")
-                                        wind = jsonObj.aggregated.windmph;
-                                    else
-                                        wind = (parseFloat(jsonObj.aggregated.windmps) * 2.23694).toFixed(1);
-                                    break;
-                                case "m/s":
-                                    wind = jsonObj.aggregated.windmps;
-                                    break;
-                                case "kn":
-                                    wind = jsonObj.aggregated.windknots;
-                                    break;
-                            }
-
-                            var htmlWindSpeedUnit = windSpeedUnit
-
-                            if (htmlWindSpeedUnit=="m/s")
-                                htmlWindSpeedUnit = "<sup>m</sup>&frasl;<sub>s</sub>"
-                                wind = wind + " <button style='background-color: #5b7c99; font-size: 16pt; padding: 0px; border-radius: 50%; width: 48px; height: 48px; border: none; display: inline-flex; align-items: center; justify-content: center; line-height: 1;' type='button' onclick='changeWindSpeedUnit()'>" + htmlWindSpeedUnit + "</button>";
-
-                            switch(windSpeedUnit) {
-                                case "mph":
-                                    var gustsMph = "-";
-                                    if (jsonObj.aggregated.gustsmph!="-")
-                                        gustsMph = jsonObj.aggregated.gustsmph;
-                                    else if (jsonObj.aggregated.gustsmps!="-")
-                                        gustsMph = (parseFloat(jsonObj.aggregated.gustsmps) * 2.23694).toFixed(1);
-                                    if (gustsMph!="-"&&gustsMph!=wind.split(" ")[0])
-                                        wind = wind + " (gusts " + gustsMph + ")";
-                                    break;
-                                case "m/s":
-                                    if (jsonObj.aggregated.gustsmps!="-"&&jsonObj.aggregated.gustsmps!=jsonObj.aggregated.windmps)
-                                        wind = wind + " (gusts " + jsonObj.aggregated.gustsmps + ")";
-                                    break;
-                                case "kn":
-                                    if (jsonObj.aggregated.gustsknots!="-"&&jsonObj.aggregated.gustsknots!=jsonObj.aggregated.windknots)
-                                        wind = wind + " (gusts " + jsonObj.aggregated.gustsknots + ")";
-                                    break;
-                            }
-
-                            if (jsonObj.weather.winddirection!="-") {
-                                wind += " <img src='wind" + jsonObj.weather.winddirection + ".png' height='32' style='vertical-align:middle'>&nbsp;";
-                                wind += jsonObj.weather.winddirection;
-                            }
-                        }
-                        document.getElementById("wind").innerHTML = wind;
-
-                        var sun = "-";
-
-                        if (jsonObj.sun.azimuth=="-"||jsonObj.sun.inclination=="-")
-                            sun = "-";
-                        else
-                            sun = "<img src='inclination.png' height='32' style='vertical-align:middle'> " + jsonObj.sun.inclination + "&deg; <img src='azimuth.png' height='40' style='vertical-align:middle'> " + jsonObj.sun.azimuth + "&deg;";
-                        document.getElementById("sun").innerHTML = sun;
-
-                        document.getElementById("batterypercentage").innerHTML = jsonObj.weather.batterypercentage=="-"?"-":jsonObj.weather.batterypercentage + " %";
-                        
-                        // Store original date for translation
-                        window.originalDate = jsonObj["updated-de"];
-                        document.getElementById("updated").innerHTML = translateDate(jsonObj["updated-de"]);
-
-                        if (jsonObj["updated-de"]!="-")
-                            if (jsonObj["offline"])
-                                document.getElementById("offline").innerHTML = "<img src='RedDot12.png' height='12' style='vertical-align:middle'>";
-                            else
-                                document.getElementById("offline").innerHTML = "<img src='GreenDot12.png' height='12' style='vertical-align:middle'>";
-                        else
-                            document.getElementById("offline").innerHTML = "";
+                            temperature += " (&mapstodown;" + minF + " &mapstoup;" + maxF + ")";
                     }
-                };
-                xhttp.open("GET", "https://api.jsonbin.io/v3/b/696e511cae596e708fe6da08/latest", true);
-                xhttp.setRequestHeader("X-Master-Key", "$2a$10$dCy/XwpaTUMoRY9vdQ4dAeZ5/zHT/RfoIafaH4YTtvOBTpigZQqum");
-                xhttp.send();
-            }
-
-            function administration() {
-                window.location.href = "administration.html";
-            }
-
-            function changeWindSpeedUnit()  {
-                switch(windSpeedUnit) {
-                    case "mph":
-                        windSpeedUnit = "m/s";
-                        break;
-                    case "m/s":
-                        windSpeedUnit = "kn";
-                        break;
-                    case "kn":
-                        windSpeedUnit = "mph";
-                        break;
                 }
-                getWeatherData();
-                getForecastData();
-            }
+                document.getElementById("temperature").innerHTML = temperature;
 
-            // Language translations
-            const translations = {
-                en: {
-                    'title': 'SMA Weather',
-                    'subtitle': 'Central Mexico 6,614 ft',
-                    'current-conditions': 'Current Conditions',
-                    'temperature': 'Temperature',
-                    'humidity': 'Humidity',
-                    'pressure': 'Pressure',
-                    'rain': 'Rain',
-                    'wind': 'Wind',
-                    'battery': 'Battery',
-                    'sun': 'Sun',
-                    'datetime': 'Date/Time',
-                    'forecast': 'Forecast',
-                    'data-from': 'Data from'
-                },
-                mx: {
-                    'title': 'Clima SMA',
-                    'subtitle': 'Centro de México 6,614 pies',
-                    'current-conditions': 'Condiciones Actuales',
-                    'temperature': 'Temperatura',
-                    'humidity': 'Humedad',
-                    'pressure': 'Presión',
-                    'rain': 'Lluvia',
-                    'wind': 'Viento',
-                    'battery': 'Batería',
-                    'sun': 'Sol',
-                    'datetime': 'Fecha/Hora',
-                    'forecast': 'Pronóstico',
-                    'data-from': 'Datos de'
+                document.getElementById("humidity").innerHTML =
+                    jsonObj.weather.humidity == "-" ? "-" : jsonObj.weather.humidity + " %rH";
+
+                var pressure = "-";
+                if (jsonObj.weather.pressure != "-") {
+                    pressure = (parseFloat(jsonObj.weather.pressure) * 0.02953).toFixed(2) + " inHg";
+                    if (jsonObj.aggregated.barotrend != "-") {
+                        if (jsonObj.aggregated.barotrend > 1)       pressure += " rising";
+                        else if (jsonObj.aggregated.barotrend < -1)  pressure += " falling";
+                    }
                 }
-            };
+                document.getElementById("pressure").innerHTML = pressure;
 
-            const dayTranslations = {
-                en: { 'Sun': 'Sun', 'Mon': 'Mon', 'Tue': 'Tue', 'Wed': 'Wed', 'Thu': 'Thu', 'Fri': 'Fri', 'Sat': 'Sat' },
-                mx: { 'Sun': 'Dom', 'Mon': 'Lun', 'Tue': 'Mar', 'Wed': 'Mié', 'Thu': 'Jue', 'Fri': 'Vie', 'Sat': 'Sáb' }
-            };
-
-            const monthTranslations = {
-                en: { 'Jan': 'Jan', 'Feb': 'Feb', 'Mar': 'Mar', 'Apr': 'Apr', 'May': 'May', 'Jun': 'Jun', 
-                      'Jul': 'Jul', 'Aug': 'Aug', 'Sep': 'Sep', 'Oct': 'Oct', 'Nov': 'Nov', 'Dec': 'Dec' },
-                mx: { 'Jan': 'Ene', 'Feb': 'Feb', 'Mar': 'Mar', 'Apr': 'Abr', 'May': 'May', 'Jun': 'Jun',
-                      'Jul': 'Jul', 'Aug': 'Ago', 'Sep': 'Sep', 'Oct': 'Oct', 'Nov': 'Nov', 'Dec': 'Dic' }
-            };
-
-            let currentLanguage = 'en';
-
-            function translateDate(dateStr) {
-                if (!dateStr || dateStr === '-') return dateStr;
-                
-                let translated = dateStr;
-                
-                // Translate day names
-                for (let [en, local] of Object.entries(dayTranslations[currentLanguage])) {
-                    translated = translated.replace(en, local);
+                var rain = "-";
+                if (jsonObj.aggregated.rainhour != "-") {
+                    rain = jsonObj.aggregated.rainhour + " <sup>mm</sup>&frasl;<sub>h</sub>";
+                    if (jsonObj.aggregated.rainday != "-")
+                        rain += ", " + jsonObj.aggregated.rainday + " <sup>mm</sup>&frasl;<sub>day</sub>";
                 }
-                
-                // Translate month names
-                for (let [en, local] of Object.entries(monthTranslations[currentLanguage])) {
-                    translated = translated.replace(en, local);
-                }
-                
-                return translated;
-            }
+                document.getElementById("rain").innerHTML = rain;
 
-            function toggleLanguage() {
-                // Toggle between English and Spanish
-                currentLanguage = (currentLanguage === 'en') ? 'mx' : 'en';
-                
-                // Update flag image
-                const flagImg = document.getElementById('flag-img');
-                if (currentLanguage === 'en') {
-                    flagImg.src = 'https://flagcdn.com/w40/us.png';
+                var wind = "-";
+                if (jsonObj.aggregated.windmps == "-") {
+                    wind = jsonObj.weather.winddirection != "-" ? jsonObj.weather.winddirection : "-";
                 } else {
-                    flagImg.src = 'https://flagcdn.com/w40/mx.png';
-                }
-                
-                // Update all translatable elements
-                document.querySelectorAll('[data-translate]').forEach(element => {
-                    const key = element.getAttribute('data-translate');
-                    if (translations[currentLanguage] && translations[currentLanguage][key]) {
-                        element.textContent = translations[currentLanguage][key];
+                    switch(windSpeedUnit) {
+                        case "mph": wind = jsonObj.aggregated.windmph != "-" ? jsonObj.aggregated.windmph : (parseFloat(jsonObj.aggregated.windmps) * 2.23694).toFixed(1); break;
+                        case "m/s": wind = jsonObj.aggregated.windmps; break;
+                        case "kn":  wind = jsonObj.aggregated.windknots; break;
                     }
-                });
-                
-                // Update date translation
-                if (window.originalDate) {
-                    document.getElementById("updated").innerHTML = translateDate(window.originalDate);
+                    var htmlWindSpeedUnit = windSpeedUnit;
+                    if (htmlWindSpeedUnit == "m/s") htmlWindSpeedUnit = "<sup>m</sup>&frasl;<sub>s</sub>";
+                    wind += " <button style='background-color:#5b7c99;font-size:16pt;padding:0;border-radius:50%;width:48px;height:48px;border:none;display:inline-flex;align-items:center;justify-content:center;line-height:1;' type='button' onclick='changeWindSpeedUnit()'>" + htmlWindSpeedUnit + "</button>";
+
+                    switch(windSpeedUnit) {
+                        case "mph":
+                            var gustsMph = jsonObj.aggregated.gustsmph != "-" ? jsonObj.aggregated.gustsmph :
+                                           (jsonObj.aggregated.gustsmps != "-" ? (parseFloat(jsonObj.aggregated.gustsmps) * 2.23694).toFixed(1) : "-");
+                            if (gustsMph != "-" && gustsMph != wind.split(" ")[0])
+                                wind += " (gusts " + gustsMph + ")";
+                            break;
+                        case "m/s":
+                            if (jsonObj.aggregated.gustsmps != "-" && jsonObj.aggregated.gustsmps != jsonObj.aggregated.windmps)
+                                wind += " (gusts " + jsonObj.aggregated.gustsmps + ")";
+                            break;
+                        case "kn":
+                            if (jsonObj.aggregated.gustsknots != "-" && jsonObj.aggregated.gustsknots != jsonObj.aggregated.windknots)
+                                wind += " (gusts " + jsonObj.aggregated.gustsknots + ")";
+                            break;
+                    }
+                    if (jsonObj.weather.winddirection != "-") {
+                        wind += " <img src='wind" + jsonObj.weather.winddirection + ".png' height='32' style='vertical-align:middle'>&nbsp;";
+                        wind += jsonObj.weather.winddirection;
+                    }
+                }
+                document.getElementById("wind").innerHTML = wind;
+
+                var sun = "-";
+                if (jsonObj.sun.azimuth != "-" && jsonObj.sun.inclination != "-")
+                    sun = "<img src='inclination.png' height='32' style='vertical-align:middle'> " +
+                          jsonObj.sun.inclination + "&deg; <img src='azimuth.png' height='40' style='vertical-align:middle'> " +
+                          jsonObj.sun.azimuth + "&deg;";
+                document.getElementById("sun").innerHTML = sun;
+
+                document.getElementById("batterypercentage").innerHTML =
+                    jsonObj.weather.batterypercentage == "-" ? "-" : jsonObj.weather.batterypercentage + " %";
+
+                document.getElementById("updated").innerHTML = jsonObj["updated-de"];
+
+                if (jsonObj["updated-de"] != "-") {
+                    document.getElementById("offline").innerHTML = jsonObj["offline"]
+                        ? "<img src='RedDot12.png' height='12' style='vertical-align:middle'>"
+                        : "<img src='GreenDot12.png' height='12' style='vertical-align:middle'>";
+                } else {
+                    document.getElementById("offline").innerHTML = "";
                 }
             }
+        };
+        xhttp.open("GET", "https://api.jsonbin.io/v3/b/696e511cae596e708fe6da08/latest", true);
+        xhttp.setRequestHeader("X-Master-Key", "$2a$10$dCy/XwpaTUMoRY9vdQ4dAeZ5/zHT/RfoIafaH4YTtvOBTpigZQqum");
+        xhttp.send();
+    }
 
-            //    one time calls
-            setInterval(function() {getWeatherData();}, 20*1000);
-            getWeatherData();
+    function changeWindSpeedUnit() {
+        switch(windSpeedUnit) {
+            case "mph": windSpeedUnit = "m/s"; break;
+            case "m/s": windSpeedUnit = "kn";  break;
+            case "kn":  windSpeedUnit = "mph"; break;
+        }
+        getWeatherData();
+        getForecastData();
+    }
 
-            setInterval(function() {getForecastData();}, 15*60*1000 );
-            getForecastData();
+    setInterval(function() { getWeatherData();   }, 20*1000);
+    setInterval(function() { getForecastData(); }, 15*60*1000);
+    getWeatherData();
+    getForecastData();
+</script>
 
-        </script>
-    </body>
+</body>
 </html>
