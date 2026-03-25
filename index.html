@@ -6,19 +6,19 @@
    <!-- Favicons and App Icons -->
           <link rel="icon" type="image/svg+xml" href="favicon.svg">
           <link rel="apple-touch-icon" href="apple-touch-icon.svg">
-          <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.svg">    
+          <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.svg">
               
     <style>
         body {
-            background-color: #C4B5A8;
-            background-image: linear-gradient(rgba(196, 181, 168, 0.55), rgba(196, 181, 168, 0.35)), url('aztec-background.jpg');
+            background-color: #FFFFFF;
+            background-image: linear-gradient(rgba(196, 181, 168, 0.15), rgba(196, 181, 168, 0.15)), url('aztec-background.jpg');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
             background-attachment: fixed;
             font-family: Georgia, 'Times New Roman', serif;
             font-size: 27pt;
-            color: #3D3630;
+            color: #000000;
         }
 
         .title-banner {
@@ -57,8 +57,7 @@
         .item-forecast { grid-area: forecast; padding-left: 2em; padding-right: 2em; }
         .item-footer   { grid-area: footer;   padding-left: 2em; padding-right: 2em; }
 
-        table { margin-left: 2em; }
-        td { font-size: 27pt; padding-right: 20px; padding-bottom: 10px; }
+        table { margin-left: 2em; }r        td { font-size: 27pt; padding-right: 20px; padding-bottom: 10px; }
         .forecast-table td        { font-size: 27pt; padding: 10px; background-color: #F6F6F6; }
         .forecast-weekend-row td  { font-size: 27pt; padding: 10px; background-color: #E6E6E6; }
 
@@ -80,15 +79,15 @@
             <button id="lang-toggle" onclick="toggleLanguage()">🇺🇸</button>
 
             <div class="title-banner">
-                <center><h1 id="title-main" style="font-size: 135%; color:#5a4a3a">SMA Weather</h1></center>
-                <center><h3 id="title-sub" style="font-size: 60%; color:#5a4a3a; margin-top: -15px;">Central Mexico 6,614 ft</h3></center>
+                <center><h1 id="title-main" style="font-size: 135%; color:#000000">SMA Weather</h1></center>
+                <center><h3 id="title-sub" style="font-size: 60%; color:#000000; margin-top: -15px;">Central Mexico 6,614 ft</h3></center>
             </div>
 
             <p id="message" hidden></p>
         </div>
 
         <div class="item-current">
-            <h3 id="current-header" style="font-size: 72%; text-align: center; color: #5a4a3a;">Current Conditions</h3>
+            <h3 id="current-header" style="font-size: 72%; text-align: center; color: #000000;">Current Conditions</h3>
             <table id="weather-table">
                 <tr><td style="text-align:center"><img src="temperature.png" height="80"></td><td id="lbl-temp">Temperature (°F)</td><td><span id="temperature">-</span></td></tr>
                 <tr><td style="text-align:center"><img src="humidity.png" height="80"></td><td id="lbl-humidity">Humidity (%rH)</td><td><span id="humidity">-</span></td></tr>
@@ -108,7 +107,7 @@
         </div>
 
         <div class="item-footer">
-            <p id="footer-text" style="font-size: 40%; text-align: center; color: #5a4a3a;">© 2026 SMA Weather</p>
+            <p id="footer-text" style="font-size: 40%; text-align: center; color: #000000;">© 2026 SMA Weather</p>
         </div>
     </div>
 
