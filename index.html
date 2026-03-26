@@ -17,12 +17,12 @@
             background-repeat: no-repeat;
             background-attachment: fixed;
             font-family: Georgia, 'Times New Roman', serif;
-            font-size: 27pt;
+            font-size: 35pt;
             color: #000000;
         }
 
         .title-banner {
-            background-color: rgba(143, 151, 121, 0.25);
+            background-color: rgba(250, 40, 150, 0.10);
             padding: 25px 0;
             border-radius: 14px;
             margin: 0 1.5em;
@@ -30,7 +30,7 @@
 
         #lang-toggle {
             position: absolute;
-            right: 65px;
+            right: 72px;
             top: 45px;
             background-color: transparent;
             border: none;
@@ -57,9 +57,10 @@
         .item-forecast { grid-area: forecast; padding-left: 2em; padding-right: 2em; }
         .item-footer   { grid-area: footer;   padding-left: 2em; padding-right: 2em; }
 
-        table { margin-left: 2em; }r        td { font-size: 27pt; padding-right: 20px; padding-bottom: 10px; }
-        .forecast-table td        { font-size: 27pt; padding: 10px; background-color: #F6F6F6; }
-        .forecast-weekend-row td  { font-size: 27pt; padding: 10px; background-color: #E6E6E6; }
+        table { margin-left: 2em; }
+        td { font-size: 35pt; padding-right: 20px; padding-bottom: 10px; }
+        .forecast-table td        { font-size: 35pt; padding: 10px; background-color: #F6F6F6; }
+        .forecast-weekend-row td  { font-size: 35pt; padding: 10px; background-color: #E6E6E6; }
 
         #weather-table {
             border-spacing: 0;
@@ -67,7 +68,10 @@
             margin: 0 auto;
         }
 
-        #weather-table td:last-child { text-align: right; }
+        /* Icon column: centered; label column: left; value column: right */
+        #weather-table td:nth-child(1) { text-align: center; }
+        #weather-table td:nth-child(2) { text-align: left; font-size: 28pt; }
+        #weather-table td:last-child   { text-align: right; font-size: 28pt; }
     </style>
 </head>
 
@@ -87,16 +91,17 @@
         </div>
 
         <div class="item-current">
-            <h3 id="current-header" style="font-size: 72%; text-align: center; color: #000000;">Current Conditions</h3>
+            <p style="font-size: 50%; text-align: center; margin-bottom: 0;"><span id="updated">-</span> <span id="offline"></span></p>
+            <h3 id="current-header" style="font-size: 55%; text-align: center; color: #000000;">Current Conditions</h3>
             <table id="weather-table">
-                <tr><td style="text-align:center"><img src="temperature.png" height="80"></td><td id="lbl-temp">Temperature (°F)</td><td><span id="temperature">-</span></td></tr>
-                <tr><td style="text-align:center"><img src="humidity.png" height="80"></td><td id="lbl-humidity">Humidity (%rH)</td><td><span id="humidity">-</span></td></tr>
-                <tr><td style="text-align:center"><img src="pressure.png" height="80"></td><td id="lbl-pressure">Pressure (inHg)</td><td><span id="pressure">-</span></td></tr>
-                <tr><td style="text-align:center"><img src="rain.png" height="80"></td><td id="lbl-rain">Rain (mm)</td><td><span id="rain">-</span></td></tr>
-                <tr><td style="text-align:center"><img src="wind.png" height="80"></td><td id="lbl-wind">Wind (mph)</td><td><span id="wind">-</span></td></tr>
+                <tr><td style="text-align:center"><img src="temperature.png" height="80"></td><td id="lbl-temp">Temperature</td><td><span id="temperature">-</span></td></tr>
+                <tr><td style="text-align:center"><img src="humidity.png" height="80"></td><td id="lbl-humidity">Humidity</td><td><span id="humidity">-</span></td></tr>
+                <tr><td style="text-align:center"><img src="pressure.png" height="80"></td><td id="lbl-pressure">Pressure</td><td><span id="pressure">-</span></td></tr>
+                <tr><td style="text-align:center"><img src="rain.png" height="80"></td><td id="lbl-rain">Rain</td><td><span id="rain">-</span></td></tr>
+                <tr><td style="text-align:center"><img src="wind.png" height="80"></td><td id="lbl-wind">Wind</td><td><span id="wind">-</span></td></tr>
                 <tr><td style="text-align:center"><img src="battery.png" height="80"></td><td id="lbl-battery">Battery</td><td><span id="batterypercentage">-</span></td></tr>
                 <tr><td style="text-align:center"><img src="sun.png" height="80"></td><td id="lbl-sun">Sun</td><td><span id="sun">-</span></td></tr>
-                <tr><td style="text-align:center"><img src="updated.png" height="80"></td><td id="lbl-updated">Date/Time</td><td><span id="updated">-</span> <span id="offline"></span></td></tr>
+                <tr><td style="text-align:center; vertical-align:bottom; padding-top:6px"><img src="sunrise.png" height="88"></td><td id="lbl-sunrise">Sunrise / Sunset</td><td><span id="sunrisesunset">-</span></td></tr>
             </table>
         </div>
 
@@ -121,13 +126,14 @@
             titleSub:     "Central Mexico 6,614 ft",
             current:      "Current Conditions",
             forecast:     "Forecast",
-            temp:         "Temperature (°F)",
-            humidity:     "Humidity (%rH)",
-            pressure:     "Pressure (inHg)",
-            rain:         "Rain (mm)",
-            wind:         "Wind (mph)",
+            temp:         "Temperature",
+            humidity:     "Humidity",
+            pressure:     "Pressure",
+            rain:         "Rain",
+            wind:         "Wind",
             battery:      "Battery",
             sun:          "Sun",
+            sunrise:      "Sunrise / Sunset",
             updated:      "Date/Time",
             dataFrom:     "Data from",
             footer:       "© 2026 SMA Weather",
@@ -140,13 +146,14 @@
             titleSub:     "México Central 6,614 pies",
             current:      "Condiciones Actuales",
             forecast:     "Pronóstico",
-            temp:         "Temperatura (°F)",
-            humidity:     "Humedad (%rH)",
-            pressure:     "Presión (inHg)",
-            rain:         "Lluvia (mm)",
-            wind:         "Viento (mph)",
+            temp:         "Temperatura",
+            humidity:     "Humedad",
+            pressure:     "Presión",
+            rain:         "Lluvia",
+            wind:         "Viento",
             battery:      "Batería",
             sun:          "Sol",
+            sunrise:      "Amanecer / Atardecer",
             updated:      "Fecha/Hora",
             dataFrom:     "Datos de",
             footer:       "© 2026 Clima SMA",
@@ -169,7 +176,7 @@
         document.getElementById("lbl-wind").innerHTML      = t.wind;
         document.getElementById("lbl-battery").innerHTML   = t.battery;
         document.getElementById("lbl-sun").innerHTML       = t.sun;
-        document.getElementById("lbl-updated").innerHTML   = t.updated;
+        document.getElementById("lbl-sunrise").innerHTML   = t.sunrise;
         document.getElementById("lbl-datafrom").innerHTML  = t.dataFrom;
         document.getElementById("footer-text").innerHTML   = t.footer;
         document.getElementById("lang-toggle").innerText   = t.toggleButton;
@@ -369,6 +376,12 @@
                           jsonObj.sun.inclination + "&deg; <img src='azimuth.png' height='40' style='vertical-align:middle'> " +
                           jsonObj.sun.azimuth + "&deg;";
                 document.getElementById("sun").innerHTML = sun;
+
+                var sunrisesunset = "-";
+                if (jsonObj.sun.sunrise != undefined && jsonObj.sun.sunrise != "-" &&
+                    jsonObj.sun.sunset  != undefined && jsonObj.sun.sunset  != "-")
+                    sunrisesunset = jsonObj.sun.sunrise + " / " + jsonObj.sun.sunset;
+                document.getElementById("sunrisesunset").innerHTML = sunrisesunset;
 
                 document.getElementById("batterypercentage").innerHTML =
                     jsonObj.weather.batterypercentage == "-" ? "-" : jsonObj.weather.batterypercentage + " %";
