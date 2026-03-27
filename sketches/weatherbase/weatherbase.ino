@@ -192,7 +192,9 @@ class WeatherWebServer : public BolbroWebServer {
     void begin() {
       on("/",                         [this]() { loadFromSpiffs("/index.html"); });
       on("/administration.html",      [this]() { CHECKLOCALACCESS loadFromSpiffs("/administration.html"); });
-      on("/aztec-background.jpg",     [this]() { loadFromSpiffs("/aztec-background.jpg"); });
+      on("/aztec-background.jpg",       [this]() { loadFromSpiffs("/aztec-background.jpg"); });
+      on("/aztec-background-gray.jpg",  [this]() { loadFromSpiffs("/aztec-background-gray.jpg"); });
+      on("/cantera-background.jpeg",    [this]() { loadFromSpiffs("/cantera-background.jpeg"); });
       on("/battery.png",              [this]() { loadFromSpiffs("/battery.png"); });
       on("/humidity.png",             [this]() { loadFromSpiffs("/humidity.png"); });
       on("/pressure.png",             [this]() { loadFromSpiffs("/pressure.png"); });

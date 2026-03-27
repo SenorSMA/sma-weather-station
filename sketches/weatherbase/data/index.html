@@ -10,22 +10,43 @@
               
     <style>
         body {
-            background-color: #FFFFFF;
-            background-image: linear-gradient(rgba(196, 181, 168, 0.15), rgba(196, 181, 168, 0.15)), url('aztec-background.jpg');
+            margin: 0;
+            padding: 0;
+            background-color: #C4B5A8;
+            font-family: 'Bodoni MT', Didot, 'Book Antiqua', Georgia, serif;
+            font-size: 35pt;
+            color: #3D3630;
+        }
+
+        .background-container {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -2;
+            background-image: url('cantera-background.jpeg');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
-            background-attachment: fixed;
-            font-family: Georgia, 'Times New Roman', serif;
-            font-size: 35pt;
-            color: #000000;
+            filter: grayscale(100%) sepia(30%) hue-rotate(15deg) brightness(2.2);
+            opacity: 0.4;
+        }
+
+        .background-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -1;
+            background: linear-gradient(rgba(139, 142, 107, 0.18), rgba(139, 142, 107, 0.15));
         }
 
         .title-banner {
-            background-color: rgba(250, 40, 150, 0.10);
-            padding: 25px 0;
-            border-radius: 14px;
-            margin: 0 1.5em;
+            background: linear-gradient(135deg, rgba(139, 142, 107, 0.35) 0%, rgba(119, 122, 87, 0.30) 100%);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+            margin: 0 1.5em 20px 1.5em;
+            border: 2px solid rgba(107, 111, 76, 0.3);
+            position: relative;
         }
 
         #lang-toggle {
@@ -76,6 +97,8 @@
 </head>
 
 <body>
+    <div class="background-container"></div>
+    <div class="background-overlay"></div>
     <div class="layout">
 
         <div class="item-header">
@@ -83,8 +106,8 @@
             <button id="lang-toggle" onclick="toggleLanguage()">🇺🇸</button>
 
             <div class="title-banner">
-                <center><h1 id="title-main" style="font-size: 135%; color:#000000">SMA Weather</h1></center>
-                <center><h3 id="title-sub" style="font-size: 60%; color:#000000; margin-top: -15px;">Central Mexico 6,614 ft</h3></center>
+                <center><h1 id="title-main" style="font-size: 135%; color:#4A4038">SMA Weather</h1></center>
+                <center><h3 id="title-sub" style="font-size: 60%; color:#5A4F47; margin-top: -15px;">Central Mexico 6,614 ft</h3></center>
             </div>
 
             <p id="message" hidden></p>
@@ -92,7 +115,7 @@
 
         <div class="item-current">
             <p style="font-size: 50%; text-align: center; margin-bottom: 0;"><span id="updated">-</span> <span id="offline"></span></p>
-            <h3 id="current-header" style="font-size: 55%; text-align: center; color: #000000;">Current Conditions</h3>
+            <h3 id="current-header" style="font-size: 55%; text-align: center; color: #4A4038;">Current Conditions</h3>
             <table id="weather-table">
                 <tr><td style="text-align:center"><img src="temperature.png" height="80"></td><td id="lbl-temp">Temperature</td><td><span id="temperature">-</span></td></tr>
                 <tr><td style="text-align:center"><img src="humidity.png" height="80"></td><td id="lbl-humidity">Humidity</td><td><span id="humidity">-</span></td></tr>
@@ -112,7 +135,7 @@
         </div>
 
         <div class="item-footer">
-            <p id="footer-text" style="font-size: 40%; text-align: center; color: #000000;">© 2026 SMA Weather</p>
+            <p id="footer-text" style="font-size: 40%; text-align: center; color: #5A4F47;">© 2026 SMA Weather</p>
         </div>
     </div>
 
