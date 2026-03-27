@@ -309,6 +309,11 @@
         xhttp.send();
     }
 
+    function setIfChanged(id, value) {
+        var el = document.getElementById(id);
+        if (el && el.innerHTML !== value) el.innerHTML = value;
+    }
+
     function getWeatherData() {
         var xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function() {
@@ -317,7 +322,7 @@
                 var jsonObj  = response.record || response;
 
                 if (jsonObj.message != undefined && jsonObj.message != "")
-                    document.getElementById("message").innerHTML = jsonObj.message;
+                    setIfChanged("message", jsonObj.message);
                 else
                     document.getElementById("message").hidden = true;
 
@@ -334,10 +339,10 @@
                             temperature += " (&mapstodown;" + minF + " &mapstoup;" + maxF + ")";
                     }
                 }
-                document.getElementById("temperature").innerHTML = temperature;
+                setIfChanged("temperature", temperature);
 
-                document.getElementById("humidity").innerHTML =
-                    jsonObj.weather.humidity == "-" ? "-" : jsonObj.weather.humidity + " %rH";
+                setIfChanged("humidity",
+                    jsonObj.weather.humidity == "-" ? "-" : jsonObj.weather.humidity + " %rH");
 
                 var pressure = "-";
                 if (jsonObj.weather.pressure != "-") {
@@ -347,7 +352,7 @@
                         else if (jsonObj.aggregated.barotrend < -1)  pressure += " falling";
                     }
                 }
-                document.getElementById("pressure").innerHTML = pressure;
+                setIfChanged("pressure", pressure);
 
                 var rain = "-";
                 if (jsonObj.aggregated.rainhour != "-") {
@@ -355,7 +360,7 @@
                     if (jsonObj.aggregated.rainday != "-")
                         rain += ", " + jsonObj.aggregated.rainday + " <sup>mm</sup>&frasl;<sub>day</sub>";
                 }
-                document.getElementById("rain").innerHTML = rain;
+                setIfChanged("rain", rain);
 
                 var wind = "-";
                 if (jsonObj.aggregated.windmps == "-") {
@@ -391,32 +396,32 @@
                         wind += jsonObj.weather.winddirection;
                     }
                 }
-                document.getElementById("wind").innerHTML = wind;
+                setIfChanged("wind", wind);
 
                 var sun = "-";
                 if (jsonObj.sun.azimuth != "-" && jsonObj.sun.inclination != "-")
                     sun = "<img src='inclination.png' height='32' style='vertical-align:middle'> " +
                           jsonObj.sun.inclination + "&deg; <img src='azimuth.png' height='40' style='vertical-align:middle'> " +
                           jsonObj.sun.azimuth + "&deg;";
-                document.getElementById("sun").innerHTML = sun;
+                setIfChanged("sun", sun);
 
                 var sunrisesunset = "-";
                 if (jsonObj.sun.sunrise != undefined && jsonObj.sun.sunrise != "-" &&
                     jsonObj.sun.sunset  != undefined && jsonObj.sun.sunset  != "-")
                     sunrisesunset = jsonObj.sun.sunrise + "/" + jsonObj.sun.sunset;
-                document.getElementById("sunrisesunset").innerHTML = sunrisesunset;
+                setIfChanged("sunrisesunset", sunrisesunset);
 
-                document.getElementById("batterypercentage").innerHTML =
-                    jsonObj.weather.batterypercentage == "-" ? "-" : jsonObj.weather.batterypercentage + " %";
+                setIfChanged("batterypercentage",
+                    jsonObj.weather.batterypercentage == "-" ? "-" : jsonObj.weather.batterypercentage + " %");
 
-                document.getElementById("updated").innerHTML = jsonObj["updated-de"];
+                setIfChanged("updated", jsonObj["updated-de"]);
 
                 if (jsonObj["updated-de"] != "-") {
-                    document.getElementById("offline").innerHTML = jsonObj["offline"]
+                    setIfChanged("offline", jsonObj["offline"]
                         ? "<img src='RedDot12.png' height='12' style='vertical-align:middle'>"
-                        : "<img src='GreenDot12.png' height='12' style='vertical-align:middle'>";
+                        : "<img src='GreenDot12.png' height='12' style='vertical-align:middle'>");
                 } else {
-                    document.getElementById("offline").innerHTML = "";
+                    setIfChanged("offline", "");
                 }
             }
         };
