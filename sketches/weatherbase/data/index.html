@@ -112,6 +112,8 @@
             #weather-table td:nth-child(1) img { display: block; margin-left: -2px; height: 64px !important; width: auto !important; }
             #weather-table td:nth-child(2) { width: 42%; font-size: 18pt; padding-right: 2px; padding-left: 8px; white-space: nowrap; overflow: hidden; }
             #weather-table td:last-child   { font-size: 16pt; text-align: right; white-space: nowrap; padding-left: 4px; }
+            #sun img[src='inclination.png'] { height: 26px !important; }
+            #sun img[src='azimuth.png']     { height: 32px !important; }
         }
     </style>
 </head>
@@ -439,8 +441,15 @@
 
                 var sunrisesunset = "-";
                 if (jsonObj.sun.sunrise != undefined && jsonObj.sun.sunrise != "-" &&
-                    jsonObj.sun.sunset  != undefined && jsonObj.sun.sunset  != "-")
-                    sunrisesunset = jsonObj.sun.sunrise + "/" + jsonObj.sun.sunset;
+                    jsonObj.sun.sunset  != undefined && jsonObj.sun.sunset  != "-") {
+                    var sr = jsonObj.sun.sunrise;
+                    var ss = jsonObj.sun.sunset;
+                    if (window.innerWidth <= 600) {
+                        sr = sr.replace(/\s*(AM|PM)/i, "");
+                        ss = ss.replace(/\s*(AM|PM)/i, "");
+                    }
+                    sunrisesunset = sr + "/" + ss;
+                }
                 setIfChanged("sunrisesunset", sunrisesunset);
 
                 setIfChanged("batterypercentage",
