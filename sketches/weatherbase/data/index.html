@@ -110,10 +110,11 @@
             }
             #weather-table td:nth-child(1) { width: 44px; padding: 4px 2px 4px 0; text-align: left; }
             #weather-table td:nth-child(1) img { display: block; margin-left: -2px; height: 64px !important; width: auto !important; }
-            #weather-table td:nth-child(2) { width: 42%; font-size: 18pt; font-weight: bold; padding-right: 2px; padding-left: 8px; white-space: nowrap; overflow: hidden; }
+            #weather-table td:nth-child(2) { width: 46%; font-size: 18pt; font-weight: bold; padding-right: 2px; padding-left: 8px; white-space: nowrap; }
             #weather-table td:last-child   { font-size: 16pt; font-weight: bold; text-align: right; white-space: nowrap; padding-left: 4px; }
             #sun img[src='inclination.png'] { height: 26px !important; }
             #sun img[src='azimuth.png']     { height: 32px !important; }
+            #wind button { width: 38px !important; height: 38px !important; font-size: 13pt !important; color: white !important; }
         }
     </style>
 </head>
@@ -189,7 +190,7 @@
             wind:         "Wind",
             battery:      "Battery",
             sun:          "Sun",
-            sunrise:      "Sunrise/Sunset",
+            sunrise:      "Sunrise<b>/</b>Sunset",
             updated:      "Date/Time",
             dataFrom:     "Data from",
             footer:       "© 2026 SMA Weather",
@@ -209,7 +210,7 @@
             wind:         "Viento",
             battery:      "Batería",
             sun:          "Sol",
-            sunrise:      "Amanecer/Atardecer",
+            sunrise:      "Amanecer<b>/</b>Atardecer",
             updated:      "Fecha/Hora",
             dataFrom:     "Datos de",
             footer:       "© 2026 Clima SMA",
@@ -448,7 +449,7 @@
                         sr = sr.replace(/\s*(AM|PM)/i, "");
                         ss = ss.replace(/\s*(AM|PM)/i, "");
                     }
-                    sunrisesunset = sr + "/" + ss;
+                    sunrisesunset = sr + "<b>/</b>" + ss;
                 }
                 setIfChanged("sunrisesunset", sunrisesunset);
 
