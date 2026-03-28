@@ -392,7 +392,7 @@
                 if (jsonObj.aggregated.rainhour != "-") {
                     rain = jsonObj.aggregated.rainhour + " <sup>mm</sup>&frasl;<sub>h</sub>";
                     if (jsonObj.aggregated.rainday != "-")
-                        rain += ", " + jsonObj.aggregated.rainday + " <sup>mm</sup>&frasl;<sub>day</sub>";
+                        rain += ", " + jsonObj.aggregated.rainday + " <sup>mm</sup>&frasl;<sub>d</sub>";
                 }
                 setIfChanged("rain", rain);
 
