@@ -1,6 +1,7 @@
 <html>
 <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>SMA Weather Station</title>
    
    <!-- Favicons and App Icons -->
@@ -95,6 +96,22 @@
         #weather-table td:nth-child(2) { text-align: left; font-size: 28pt; padding-right: 4px; }
         #weather-table td:last-child   { text-align: right; font-size: 32pt; }
 
+        /* ── PHONE LAYOUT ── */
+        @media (max-width: 600px) {
+            body           { font-size: 20pt; }
+            .item-header   { padding-top: 0.4em; }
+            .item-current  { padding-left: 0.1em; padding-right: 0.1em; }
+            .item-footer   { padding-left: 0.1em; padding-right: 0.1em; }
+            table          { margin-left: 0; }
+            .title-banner  { margin: 0 0.2em 8px 0.2em; }
+            #weather-table {
+                width: 100%;
+                table-layout: fixed;
+            }
+            #weather-table td:nth-child(1) { width: 52px; padding: 4px 2px; }
+            #weather-table td:nth-child(2) { width: 42%; font-size: 18pt; padding-right: 2px; white-space: nowrap; overflow: hidden; }
+            #weather-table td:last-child   { font-size: 20pt; white-space: nowrap; padding-left: 2px; }
+        }
     </style>
 </head>
 
