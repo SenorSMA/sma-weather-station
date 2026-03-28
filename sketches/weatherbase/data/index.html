@@ -115,6 +115,8 @@
             #sun img[src='inclination.png'] { height: 26px !important; }
             #sun img[src='azimuth.png']     { height: 32px !important; }
             #wind button { width: 38px !important; height: 38px !important; font-size: 13pt !important; color: white !important; }
+            #date-line   { font-size: 62% !important; text-align: center; margin: 4px 0 0 0; }
+            #current-header { font-size: 62% !important; }
         }
     </style>
 </head>
@@ -136,7 +138,7 @@
         </div>
 
         <div class="item-current">
-            <p style="font-size: 52%; text-align: center; margin-bottom: 0;"><span id="updated">-</span> <span id="offline"></span></p>
+            <p id="date-line" style="font-size: 52%; text-align: center; margin-bottom: 0;"><span id="updated">-</span> <span id="offline"></span></p>
             <h3 id="current-header" style="font-size: 55%; text-align: center; color: #4A4038;">Current Conditions</h3>
             <table id="weather-table">
                 <tr><td style="text-align:center"><img src="temperature.png" height="80"></td><td id="lbl-temp">Temperature</td><td><span id="temperature">-</span></td></tr>
@@ -246,6 +248,13 @@
     }
 
     applyLanguage();
+
+    /* ── PHONE: move date-line inside banner ── */
+    if (window.innerWidth <= 600) {
+        var dateLine = document.getElementById("date-line");
+        var banner   = document.querySelector(".title-banner");
+        if (dateLine && banner) banner.appendChild(dateLine);
+    }
 
     /* ── WEATHER DATA ── */
     let windDirectionsArray = [
