@@ -167,6 +167,7 @@
     /* ── LANGUAGE SYSTEM ── */
     let currentLang = "en";
     let lastUpdatedStr = "-";
+    const _cache = {};
 
     function formatDateForLang(dateStr, lang) {
         if (dateStr === "-" || lang === "en") return dateStr;
@@ -346,7 +347,6 @@
         xhttp.send();
     }
 
-    const _cache = {};
     function setIfChanged(id, value) {
         if (_cache[id] === value) return;
         _cache[id] = value;
