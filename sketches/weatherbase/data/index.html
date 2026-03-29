@@ -346,9 +346,12 @@
         xhttp.send();
     }
 
+    const _cache = {};
     function setIfChanged(id, value) {
+        if (_cache[id] === value) return;
+        _cache[id] = value;
         var el = document.getElementById(id);
-        if (el && el.innerHTML !== value) el.innerHTML = value;
+        if (el) el.innerHTML = value;
     }
 
     function getWeatherData() {
