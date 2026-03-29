@@ -148,7 +148,7 @@
                 <tr><td style="text-align:center"><img src="wind.png" height="80"></td><td id="lbl-wind">Wind</td><td><span id="wind">-</span></td></tr>
                 <tr><td style="text-align:center"><img src="battery.png" height="80"></td><td id="lbl-battery">Battery</td><td><span id="batterypercentage">-</span></td></tr>
                 <tr><td style="text-align:center"><img src="sun.png" height="80"></td><td id="lbl-sun">Sun</td><td><span id="sun">-</span></td></tr>
-                <tr><td style="text-align:center; vertical-align:bottom; padding-top:6px"><img src="sunrise.png" height="88"></td><td id="lbl-sunrise">Sunrise<b>/</b>Sunset</td><td><span id="sunrisesunset">-</span></td></tr>
+                <tr><td style="text-align:center; vertical-align:bottom; padding-top:6px"><img src="sunrise.png" height="88"></td><td id="lbl-sunrise">Sunrise<span style='font-weight:900;font-size:115%'>/</span>Sunset</td><td><span id="sunrisesunset">-</span></td></tr>
             </table>
         </div>
 
@@ -193,7 +193,7 @@
             wind:         "Wind",
             battery:      "Battery",
             sun:          "Sun",
-            sunrise:      "Sunrise<b>/</b>Sunset",
+            sunrise:      "Sunrise<span style='font-weight:900;font-size:115%'>/</span>Sunset",
             updated:      "Date/Time",
             dataFrom:     "Data from",
             footer:       "© 2026 SMA Weather",
@@ -213,7 +213,7 @@
             wind:         "Viento",
             battery:      "Batería",
             sun:          "Sol",
-            sunrise:      "Amanecer<b>/</b>Atardecer",
+            sunrise:      "Amanecer<span style='font-weight:900;font-size:115%'>/</span>Atardecer",
             updated:      "Fecha/Hora",
             dataFrom:     "Datos de",
             footer:       "© 2026 Clima SMA",
@@ -292,7 +292,7 @@
                     else
                         table += "<td><img src='WeatherIcon" + jsonObj.list[i].weather[0].icon.slice(0,-1) + "d.png' height='80'></td>";
 
-                    var temp = ((jsonObj.list[i].temp.max * 9/5) + 32).toFixed(0) + "<b>/</b>" +
+                    var temp = ((jsonObj.list[i].temp.max * 9/5) + 32).toFixed(0) + "<span style='font-weight:900;font-size:115%'>/</span>" +
                                ((jsonObj.list[i].temp.min * 9/5) + 32).toFixed(0) + " &#8457;";
                     table += "<td><nobr>" + temp + "</nobr></td>";
 
@@ -413,7 +413,7 @@
                     }
                     var htmlWindSpeedUnit = windSpeedUnit;
                     if (htmlWindSpeedUnit == "m/s") htmlWindSpeedUnit = "<sup>m</sup>&frasl;<sub>s</sub>";
-                    wind += " <button style='background-color:#5b7c99;font-size:16pt;padding:0;border-radius:50%;width:48px;height:48px;border:none;display:inline-flex;align-items:center;justify-content:center;line-height:1;' type='button' onclick='changeWindSpeedUnit()'>" + htmlWindSpeedUnit + "</button>";
+                    wind += " <button style='background-color:#5b7c99;color:white;font-size:16pt;padding:0;border-radius:50%;width:48px;height:48px;border:none;display:inline-flex;align-items:center;justify-content:center;line-height:1;' type='button' onclick='changeWindSpeedUnit()'>" + htmlWindSpeedUnit + "</button>";
 
                     switch(windSpeedUnit) {
                         case "mph":
@@ -454,7 +454,7 @@
                         sr = sr.replace(/\s*(AM|PM)/i, "");
                         ss = ss.replace(/\s*(AM|PM)/i, "");
                     }
-                    sunrisesunset = sr + "<b>/</b>" + ss;
+                    sunrisesunset = sr + "<span style='font-weight:900;font-size:115%'>/</span>" + ss;
                 }
                 setIfChanged("sunrisesunset", sunrisesunset);
 
