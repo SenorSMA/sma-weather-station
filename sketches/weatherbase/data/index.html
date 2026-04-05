@@ -116,7 +116,6 @@
             #sun img[src='inclination.png'] { height: 26px !important; }
             #sun img[src='azimuth.png']     { height: 32px !important; }
             #wind button { width: 27px !important; height: 27px !important; font-size: 9pt !important; color: white !important; }
-            #wind-row td:last-child { white-space: normal !important; }
             #date-line   { font-size: 62% !important; text-align: center; margin: 4px 0 0 0; }
             #current-header { font-size: 62% !important; }
         }
@@ -443,12 +442,16 @@
 
                     recordGust(jsonObj.aggregated.gustsmps);
                     var maxG = maxGust60(windSpeedUnit);
-                    if (maxG != "-" && maxG != wind.split(" ")[0])
+                    var isPhone = window.innerWidth <= 600;
+                    if (!isPhone && maxG != "-" && maxG != wind.split(" ")[0])
                         wind += " (gusts " + maxG + ")";
                     if (jsonObj.weather.winddirection != "-") {
-                        wind += " <img src='wind" + jsonObj.weather.winddirection + ".png' height='32' style='vertical-align:middle'>&nbsp;";
+                        var arrowH = isPhone ? 22 : 32;
+                        wind += " <img src='wind" + jsonObj.weather.winddirection + ".png' height='" + arrowH + "' style='vertical-align:middle'>&nbsp;";
                         wind += jsonObj.weather.winddirection;
                     }
+                    if (isPhone && maxG != "-" && maxG != wind.split(" ")[0])
+                        wind += "<br>(gusts " + maxG + ")";
                 }
                 setIfChanged("wind", wind);
 
