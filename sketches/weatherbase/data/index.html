@@ -149,7 +149,7 @@
                 <tr id="wind-row"><td style="text-align:center"><img src="wind.png" height="80"></td><td id="lbl-wind">Wind</td><td><span id="wind">-</span></td></tr>
                 <tr><td style="text-align:center"><img src="battery.png" height="80"></td><td id="lbl-battery">Battery</td><td><span id="batterypercentage">-</span></td></tr>
                 <tr><td style="text-align:center"><img src="sun.png" height="80"></td><td id="lbl-sun">Sun</td><td><span id="sun">-</span></td></tr>
-                <tr><td style="text-align:center; vertical-align:bottom; padding-top:6px"><img src="sunrise.png" height="88"></td><td id="lbl-sunrise">Sunrise/Sunset</td><td><span id="sunrisesunset">-</span></td></tr>
+                <tr><td style="text-align:center; vertical-align:bottom; padding-top:6px"><img src="sunrise.png" height="88"></td><td id="lbl-sunrise">Sunrise&thinsp;/&thinsp;Sunset</td><td><span id="sunrisesunset">-</span></td></tr>
             </table>
         </div>
 
@@ -194,7 +194,7 @@
             wind:         "Wind",
             battery:      "Battery",
             sun:          "Sun",
-            sunrise:      "Sunrise/Sunset",
+            sunrise:      "Sunrise&thinsp;/&thinsp;Sunset",
             updated:      "Date/Time",
             dataFrom:     "Data from",
             footer:       "© 2026 SMA Weather",
@@ -214,7 +214,7 @@
             wind:         "Viento",
             battery:      "Batería",
             sun:          "Sol",
-            sunrise:      "Amanecer/Atardecer",
+            sunrise:      "Amanecer&thinsp;/&thinsp;Atardecer",
             updated:      "Fecha/Hora",
             dataFrom:     "Datos de",
             footer:       "© 2026 Clima SMA",
@@ -438,7 +438,7 @@
                     }
                     var htmlWindSpeedUnit = windSpeedUnit;
                     if (htmlWindSpeedUnit == "m/s") htmlWindSpeedUnit = "<sup>m</sup>&frasl;<sub>s</sub>";
-                    wind += " <button style='background-color:#5b7c99;color:white;font-size:16pt;padding:0;border-radius:50%;width:48px;height:48px;border:none;display:inline-flex;align-items:center;justify-content:center;line-height:1;' type='button' onclick='changeWindSpeedUnit()'>" + htmlWindSpeedUnit + "</button>";
+                    wind += " <button style='background-color:#5b7c99;color:white;font-size:11pt;padding:0;border-radius:50%;width:34px;height:34px;border:none;display:inline-flex;align-items:center;justify-content:center;line-height:1;' type='button' onclick='changeWindSpeedUnit()'>" + htmlWindSpeedUnit + "</button>";
 
                     recordGust(jsonObj.aggregated.gustsmps);
                     var maxG = maxGust60(windSpeedUnit);
@@ -467,7 +467,7 @@
                         sr = sr.replace(/\s*(AM|PM)/i, "");
                         ss = ss.replace(/\s*(AM|PM)/i, "");
                     }
-                    sunrisesunset = sr + "/" + ss;
+                    sunrisesunset = sr + "&thinsp;/&thinsp;" + ss;
                 }
                 setIfChanged("sunrisesunset", sunrisesunset);
 
