@@ -252,6 +252,30 @@
     applyLanguage();
 
     /* ── WEATHER DATA ── */
+
+    /* Rolling 60-minute gust tracker (stores raw m/s values with timestamps) */
+    const gustHistory = [];
+    const GUST_WINDOW = 60 * 60 * 1000;
+
+    function recordGust(mps) {
+        const now = Date.now();
+        if (mps != "-" && !isNaN(parseFloat(mps)))
+            gustHistory.push({ t: now, v: parseFloat(mps) });
+        const cutoff = now - GUST_WINDOW;
+        while (gustHistory.length && gustHistory[0].t < cutoff)
+            gustHistory.shift();
+    }
+
+    function maxGust60(unit) {
+        if (!gustHistory.length) return "-";
+        const maxMps = Math.max(...gustHistory.map(g => g.v));
+        switch(unit) {
+            case "mph": return (maxMps * 2.23694).toFixed(1);
+            case "m/s": return maxMps.toFixed(1);
+            case "kn":  return (maxMps * 1.94384).toFixed(1);
+        }
+    }
+
     let windDirectionsArray = [
         ['N','North'],['NNE','North-Northeast'],['NE','Northeast'],['ENE','East-Northeast'],
         ['E','East'],['ESE','East-Southeast'],['SE','Southeast'],['SSE','South-Southeast'],
@@ -416,22 +440,10 @@
                     if (htmlWindSpeedUnit == "m/s") htmlWindSpeedUnit = "<sup>m</sup>&frasl;<sub>s</sub>";
                     wind += " <button style='background-color:#5b7c99;color:white;font-size:16pt;padding:0;border-radius:50%;width:48px;height:48px;border:none;display:inline-flex;align-items:center;justify-content:center;line-height:1;' type='button' onclick='changeWindSpeedUnit()'>" + htmlWindSpeedUnit + "</button>";
 
-                    switch(windSpeedUnit) {
-                        case "mph":
-                            var gustsMph = jsonObj.aggregated.gustsmph != "-" ? jsonObj.aggregated.gustsmph :
-                                           (jsonObj.aggregated.gustsmps != "-" ? (parseFloat(jsonObj.aggregated.gustsmps) * 2.23694).toFixed(1) : "-");
-                            if (gustsMph != "-" && gustsMph != wind.split(" ")[0])
-                                wind += " (gusts " + gustsMph + ")";
-                            break;
-                        case "m/s":
-                            if (jsonObj.aggregated.gustsmps != "-" && jsonObj.aggregated.gustsmps != jsonObj.aggregated.windmps)
-                                wind += " (gusts " + jsonObj.aggregated.gustsmps + ")";
-                            break;
-                        case "kn":
-                            if (jsonObj.aggregated.gustsknots != "-" && jsonObj.aggregated.gustsknots != jsonObj.aggregated.windknots)
-                                wind += " (gusts " + jsonObj.aggregated.gustsknots + ")";
-                            break;
-                    }
+                    recordGust(jsonObj.aggregated.gustsmps);
+                    var maxG = maxGust60(windSpeedUnit);
+                    if (maxG != "-" && maxG != wind.split(" ")[0])
+                        wind += " (gusts " + maxG + ")";
                     if (jsonObj.weather.winddirection != "-") {
                         wind += " <img src='wind" + jsonObj.weather.winddirection + ".png' height='32' style='vertical-align:middle'>&nbsp;";
                         wind += jsonObj.weather.winddirection;
