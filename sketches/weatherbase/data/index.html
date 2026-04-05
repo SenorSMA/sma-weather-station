@@ -111,8 +111,8 @@
             }
             #weather-table td:nth-child(1) { width: 44px; padding: 4px 2px 4px 0; text-align: left; }
             #weather-table td:nth-child(1) img { display: block; margin-left: -2px; height: 64px !important; width: auto !important; }
-            #weather-table td:nth-child(2) { width: 46%; font-size: 18pt; font-weight: bold; padding-right: 2px; padding-left: 8px; white-space: nowrap; }
-            #weather-table td:last-child   { font-size: 14pt; font-weight: bold; text-align: right; white-space: nowrap; padding-left: 4px; padding-right: 14px; }
+            #weather-table td:nth-child(2) { width: 42%; font-size: 18pt; font-weight: bold; padding-right: 2px; padding-left: 8px; white-space: nowrap; }
+            #weather-table td:last-child   { font-size: 13pt; font-weight: bold; text-align: right; white-space: nowrap; padding-left: 4px; padding-right: 8px; }
             #sun img[src='inclination.png'] { height: 26px !important; }
             #sun img[src='azimuth.png']     { height: 32px !important; }
             #wind button { width: 27px !important; height: 27px !important; font-size: 9pt !important; color: white !important; }
@@ -451,7 +451,7 @@
                         wind += jsonObj.weather.winddirection;
                     }
                     if (isPhone && maxG != "-" && maxG != wind.split(" ")[0])
-                        wind += "<br>(gusts " + maxG + ")";
+                        wind += " ↑" + maxG;
                 }
                 setIfChanged("wind", wind);
 
