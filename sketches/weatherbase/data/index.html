@@ -112,9 +112,8 @@
             #weather-table td:nth-child(1) { width: 44px; padding: 4px 2px 4px 0; text-align: left; }
             #weather-table td:nth-child(1) img { display: block; margin-left: -2px; height: 64px !important; width: auto !important; }
             #weather-table td:nth-child(2) { width: 42%; font-size: 18pt; font-weight: bold; padding-right: 2px; padding-left: 8px; white-space: nowrap; }
-            #weather-table td:last-child   { font-size: 13pt; font-weight: bold; text-align: right; white-space: nowrap; padding-left: 4px; padding-right: 8px; }
-            #sun img[src='inclination.png'] { height: 26px !important; }
-            #sun img[src='azimuth.png']     { height: 32px !important; }
+            #weather-table td:last-child   { font-size: 16pt; font-weight: bold; text-align: right; white-space: nowrap; padding-left: 4px; padding-right: 8px; }
+            #wind-row td:last-child        { font-size: 13pt !important; }
             #wind button { width: 27px !important; height: 27px !important; font-size: 9pt !important; color: white !important; }
             #date-line   { font-size: 62% !important; text-align: center; margin: 4px 0 0 0; }
             #current-header { font-size: 62% !important; }
@@ -252,6 +251,24 @@
     applyLanguage();
 
     /* ── WEATHER DATA ── */
+
+    /* Sun elevation SVG: draws a horizontal baseline + angle line + arc indicator */
+    function inclinationSVG(deg, h) {
+        var w = Math.round(h * 1.6);
+        var bx = 3, by = h - 4;
+        var len = h - 6;
+        var rad = deg * Math.PI / 180;
+        var x2 = bx + Math.round(len * Math.cos(rad));
+        var y2 = by - Math.round(len * Math.sin(rad));
+        var ar = Math.round(len * 0.35);
+        var ax = bx + Math.round(ar * Math.cos(rad));
+        var ay = by - Math.round(ar * Math.sin(rad));
+        return '<svg width="'+w+'" height="'+h+'" viewBox="0 0 '+w+' '+h+'" style="vertical-align:middle">' +
+               '<line x1="'+bx+'" y1="'+by+'" x2="'+(bx+len)+'" y2="'+by+'" stroke="currentColor" stroke-width="2"/>' +
+               '<line x1="'+bx+'" y1="'+by+'" x2="'+x2+'" y2="'+y2+'" stroke="currentColor" stroke-width="2"/>' +
+               '<path d="M'+(bx+ar)+','+by+' A'+ar+','+ar+' 0 0,1 '+ax+','+ay+'" stroke="currentColor" stroke-width="1.5" fill="none"/>' +
+               '</svg>';
+    }
 
     /* Rolling 60-minute gust tracker (stores raw m/s values with timestamps) */
     const gustHistory = [];
@@ -427,6 +444,7 @@
                 }
                 setIfChanged("rain", rain);
 
+                var isPhone = window.innerWidth <= 600;
                 var wind = "-";
                 if (jsonObj.aggregated.windmps == "-") {
                     wind = jsonObj.weather.winddirection != "-" ? jsonObj.weather.winddirection : "-";
@@ -442,7 +460,6 @@
 
                     recordGust(jsonObj.aggregated.gustsmps);
                     var maxG = maxGust60(windSpeedUnit);
-                    var isPhone = window.innerWidth <= 600;
                     if (!isPhone && maxG != "-" && maxG != wind.split(" ")[0])
                         wind += " (gusts " + maxG + ")";
                     if (jsonObj.weather.winddirection != "-") {
@@ -456,10 +473,16 @@
                 setIfChanged("wind", wind);
 
                 var sun = "-";
-                if (jsonObj.sun.azimuth != "-" && jsonObj.sun.inclination != "-")
-                    sun = "<img src='inclination.png' height='32' style='vertical-align:middle'> " +
-                          jsonObj.sun.inclination + "&deg; <img src='azimuth.png' height='40' style='vertical-align:middle'> " +
+                if (jsonObj.sun.azimuth != "-" && jsonObj.sun.inclination != "-") {
+                    var incH = isPhone ? 26 : 32;
+                    var azH  = isPhone ? 32 : 40;
+                    var incDeg = parseFloat(jsonObj.sun.inclination);
+                    var azDeg  = parseFloat(jsonObj.sun.azimuth);
+                    sun = inclinationSVG(incDeg, incH) + " " +
+                          jsonObj.sun.inclination + "&deg; " +
+                          "<img src='azimuth.png' height='" + azH + "' style='vertical-align:middle;transform:rotate(" + azDeg + "deg);display:inline-block'> " +
                           jsonObj.sun.azimuth + "&deg;";
+                }
                 setIfChanged("sun", sun);
 
                 var sunrisesunset = "-";
