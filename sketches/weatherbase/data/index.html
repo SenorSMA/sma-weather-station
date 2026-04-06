@@ -459,7 +459,7 @@
                     }
                     var htmlWindSpeedUnit = windSpeedUnit;
                     if (htmlWindSpeedUnit == "m/s") htmlWindSpeedUnit = "<sup>m</sup><span class='bslash'>&frasl;</span><sub>s</sub>";
-                    wind += " <button style='background-color:#5b7c99;color:white;font-size:11pt;padding:0;border-radius:50%;width:34px;height:34px;border:none;display:inline-flex;align-items:center;justify-content:center;line-height:1;' type='button' onclick='changeWindSpeedUnit()'>" + htmlWindSpeedUnit + "</button>";
+                    wind += " <button style='background-color:#5b7c99;color:white;font-size:11pt;padding:0;border-radius:50%;width:34px;height:34px;border:none;display:inline-flex;align-items:center;justify-content:center;line-height:1;position:relative;top:-3px;' type='button' onclick='changeWindSpeedUnit()'>" + htmlWindSpeedUnit + "</button>";
 
                     recordGust(jsonObj.aggregated.gustsmps);
                     var maxG = maxGust60(windSpeedUnit);
@@ -467,7 +467,7 @@
                         wind += " (gusts " + maxG + ")";
                     if (jsonObj.weather.winddirection != "-") {
                         var arrowH = isPhone ? 22 : 32;
-                        wind += " <img src='wind" + jsonObj.weather.winddirection + ".png' height='" + arrowH + "' style='vertical-align:middle'>&nbsp;";
+                        wind += " <img src='wind" + jsonObj.weather.winddirection + ".png' height='" + arrowH + "' style='vertical-align:middle;position:relative;top:-2px'>&nbsp;";
                         wind += jsonObj.weather.winddirection;
                     }
                     if (isPhone && maxG != "-" && maxG != wind.split(" ")[0])
