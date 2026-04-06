@@ -91,6 +91,8 @@
             margin: 0 auto;
         }
 
+        .bslash { -webkit-text-stroke: 0.7px currentColor; font-weight: bold; }
+
         /* Icon column: centered; label column: left; value column: right */
         #weather-table td:nth-child(1) { text-align: center; }
         #weather-table td:nth-child(2) { text-align: left; font-size: 28pt; padding-right: 4px; }
@@ -148,7 +150,7 @@
                 <tr id="wind-row"><td style="text-align:center"><img src="wind.png" height="80"></td><td id="lbl-wind">Wind</td><td><span id="wind">-</span></td></tr>
                 <tr><td style="text-align:center"><img src="battery.png" height="80"></td><td id="lbl-battery">Battery</td><td><span id="batterypercentage">-</span></td></tr>
                 <tr><td style="text-align:center"><img src="sun.png" height="80"></td><td id="lbl-sun">Sun</td><td><span id="sun">-</span></td></tr>
-                <tr><td style="text-align:center; vertical-align:bottom; padding-top:6px"><img src="sunrise.png" height="88"></td><td id="lbl-sunrise">Sunrise&thinsp;/&thinsp;Sunset</td><td><span id="sunrisesunset">-</span></td></tr>
+                <tr><td style="text-align:center; vertical-align:bottom; padding-top:6px"><img src="sunrise.png" height="88"></td><td id="lbl-sunrise">Sunrise&thinsp;<span class="bslash">/</span>&thinsp;Sunset</td><td><span id="sunrisesunset">-</span></td></tr>
             </table>
         </div>
 
@@ -193,7 +195,7 @@
             wind:         "Wind",
             battery:      "Battery",
             sun:          "Sun",
-            sunrise:      "Sunrise&thinsp;/&thinsp;Sunset",
+            sunrise:      "Sunrise&thinsp;<span class="bslash">/</span>&thinsp;Sunset",
             updated:      "Date/Time",
             dataFrom:     "Data from",
             footer:       "© 2026 SMA Weather",
@@ -213,7 +215,7 @@
             wind:         "Viento",
             battery:      "Batería",
             sun:          "Sol",
-            sunrise:      "Amanecer&thinsp;/&thinsp;Atardecer",
+            sunrise:      "Amanecer&thinsp;<span class="bslash">/</span>&thinsp;Atardecer",
             updated:      "Fecha/Hora",
             dataFrom:     "Datos de",
             footer:       "© 2026 Clima SMA",
@@ -343,7 +345,7 @@
                     if (windspeedval != "-") {
                         switch(windSpeedUnit) {
                             case "mph": windspeed = (windspeedval * 2.23694).toFixed(1) + " mph"; break;
-                            case "m/s": windspeed = windspeedval.toFixed(1) + " <sup>m</sup>&frasl;<sub>s</sub>"; break;
+                            case "m/s": windspeed = windspeedval.toFixed(1) + " <sup>m</sup><span class='bslash'>&frasl;</span><sub>s</sub>"; break;
                             case "kn":  windspeed = (windspeedval * 1.94384).toFixed(1) + " kn"; break;
                         }
                     }
@@ -438,9 +440,9 @@
 
                 var rain = "-";
                 if (jsonObj.aggregated.rainhour != "-") {
-                    rain = jsonObj.aggregated.rainhour + " <sup>mm</sup>&frasl;<sub>h</sub>";
+                    rain = jsonObj.aggregated.rainhour + " <sup>mm</sup><span class='bslash'>&frasl;</span><sub>h</sub>";
                     if (jsonObj.aggregated.rainday != "-")
-                        rain += ", " + jsonObj.aggregated.rainday + " <sup>mm</sup>&frasl;<sub>d</sub>";
+                        rain += ", " + jsonObj.aggregated.rainday + " <sup>mm</sup><span class='bslash'>&frasl;</span><sub>d</sub>";
                 }
                 setIfChanged("rain", rain);
 
@@ -455,7 +457,7 @@
                         case "kn":  wind = jsonObj.aggregated.windknots; break;
                     }
                     var htmlWindSpeedUnit = windSpeedUnit;
-                    if (htmlWindSpeedUnit == "m/s") htmlWindSpeedUnit = "<sup>m</sup>&frasl;<sub>s</sub>";
+                    if (htmlWindSpeedUnit == "m/s") htmlWindSpeedUnit = "<sup>m</sup><span class='bslash'>&frasl;</span><sub>s</sub>";
                     wind += " <button style='background-color:#5b7c99;color:white;font-size:11pt;padding:0;border-radius:50%;width:34px;height:34px;border:none;display:inline-flex;align-items:center;justify-content:center;line-height:1;' type='button' onclick='changeWindSpeedUnit()'>" + htmlWindSpeedUnit + "</button>";
 
                     recordGust(jsonObj.aggregated.gustsmps);
@@ -494,7 +496,7 @@
                         sr = sr.replace(/\s*(AM|PM)/i, "");
                         ss = ss.replace(/\s*(AM|PM)/i, "");
                     }
-                    sunrisesunset = sr + "&thinsp;/&thinsp;" + ss;
+                    sunrisesunset = sr + "&thinsp;<span class='bslash'>/</span>&thinsp;" + ss;
                 }
                 setIfChanged("sunrisesunset", sunrisesunset);
 
