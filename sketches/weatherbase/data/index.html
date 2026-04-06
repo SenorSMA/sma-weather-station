@@ -52,8 +52,8 @@
 
         #lang-toggle {
             position: absolute;
-            right: 5px;
-            top: 5px;
+            right: 3px;
+            top: 1px;
             background-color: transparent;
             border: none;
             font-size: 28pt;
@@ -266,7 +266,7 @@
         var ar = Math.round(len * 0.35);
         var ax = bx + Math.round(ar * Math.cos(rad));
         var ay = by - Math.round(ar * Math.sin(rad));
-        return '<svg width="'+w+'" height="'+h+'" viewBox="0 0 '+w+' '+h+'" style="width:'+w+'px;height:'+h+'px;vertical-align:text-top;position:relative;top:-5px;flex-shrink:0">' +
+        return '<svg width="'+w+'" height="'+h+'" viewBox="0 0 '+w+' '+h+'" style="width:'+w+'px;height:'+h+'px;vertical-align:text-top;position:relative;top:-5px;left:4px;flex-shrink:0">' +
                '<line x1="'+bx+'" y1="'+by+'" x2="'+(bx+len)+'" y2="'+by+'" stroke="currentColor" stroke-width="2"/>' +
                '<line x1="'+bx+'" y1="'+by+'" x2="'+x2+'" y2="'+y2+'" stroke="currentColor" stroke-width="2"/>' +
                '<path d="M'+(bx+ar)+','+by+' A'+ar+','+ar+' 0 0,1 '+ax+','+ay+'" stroke="currentColor" stroke-width="1.5" fill="none"/>' +
@@ -481,8 +481,8 @@
                     var incH = azH;
                     var incDeg = parseFloat(jsonObj.sun.inclination);
                     var azDeg  = parseFloat(jsonObj.sun.azimuth);
-                    sun = inclinationSVG(incDeg, incH) + " " +
-                          jsonObj.sun.inclination + "&deg; " +
+                    sun = inclinationSVG(incDeg, incH) +
+                          "<span style='position:relative;left:-4px'>" + jsonObj.sun.inclination + "&deg;</span> " +
                           "<img src='azimuth.png' height='" + azH + "' style='vertical-align:middle;transform:rotate(" + azDeg + "deg);display:inline-block'> " +
                           jsonObj.sun.azimuth + "&deg;";
                 }
