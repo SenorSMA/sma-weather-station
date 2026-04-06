@@ -195,7 +195,7 @@
             wind:         "Wind",
             battery:      "Battery",
             sun:          "Sun",
-            sunrise:      "Sunrise&thinsp;<span class="bslash">/</span>&thinsp;Sunset",
+            sunrise:      "Sunrise&thinsp;<span class='bslash'>/</span>&thinsp;Sunset",
             updated:      "Date/Time",
             dataFrom:     "Data from",
             footer:       "© 2026 SMA Weather",
@@ -215,7 +215,7 @@
             wind:         "Viento",
             battery:      "Batería",
             sun:          "Sol",
-            sunrise:      "Amanecer&thinsp;<span class="bslash">/</span>&thinsp;Atardecer",
+            sunrise:      "Amanecer&thinsp;<span class='bslash'>/</span>&thinsp;Atardecer",
             updated:      "Fecha/Hora",
             dataFrom:     "Datos de",
             footer:       "© 2026 Clima SMA",
@@ -265,7 +265,7 @@
         var ar = Math.round(len * 0.35);
         var ax = bx + Math.round(ar * Math.cos(rad));
         var ay = by - Math.round(ar * Math.sin(rad));
-        return '<svg width="'+w+'" height="'+h+'" viewBox="0 0 '+w+' '+h+'" style="width:'+w+'px;height:'+h+'px;vertical-align:middle;flex-shrink:0">' +
+        return '<svg width="'+w+'" height="'+h+'" viewBox="0 0 '+w+' '+h+'" style="width:'+w+'px;height:'+h+'px;vertical-align:text-top;flex-shrink:0">' +
                '<line x1="'+bx+'" y1="'+by+'" x2="'+(bx+len)+'" y2="'+by+'" stroke="currentColor" stroke-width="2"/>' +
                '<line x1="'+bx+'" y1="'+by+'" x2="'+x2+'" y2="'+y2+'" stroke="currentColor" stroke-width="2"/>' +
                '<path d="M'+(bx+ar)+','+by+' A'+ar+','+ar+' 0 0,1 '+ax+','+ay+'" stroke="currentColor" stroke-width="1.5" fill="none"/>' +
@@ -432,8 +432,8 @@
                 if (jsonObj.weather.pressure != "-") {
                     pressure = (parseFloat(jsonObj.weather.pressure) * 0.02953).toFixed(2) + " inHg";
                     if (jsonObj.aggregated.barotrend != "-") {
-                        if (jsonObj.aggregated.barotrend > 1)       pressure += " rising";
-                        else if (jsonObj.aggregated.barotrend < -1)  pressure += " falling";
+                        if (jsonObj.aggregated.barotrend > 1)       pressure += " <span style='color:#b85042'>&mapstoup;</span>";
+                        else if (jsonObj.aggregated.barotrend < -1)  pressure += " <span style='color:#5b7c99'>&mapstodown;</span>";
                     }
                 }
                 setIfChanged("pressure", pressure);
