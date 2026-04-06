@@ -467,7 +467,7 @@
                         wind += " (gusts " + maxG + ")";
                     if (jsonObj.weather.winddirection != "-") {
                         var arrowH = isPhone ? 22 : 32;
-                        wind += " <img src='wind" + jsonObj.weather.winddirection + ".png' height='" + arrowH + "' style='vertical-align:middle;position:relative;top:-2px'>&nbsp;";
+                        wind += " <img src='wind" + jsonObj.weather.winddirection + ".png' height='" + arrowH + "' style='vertical-align:middle;position:relative;top:-1px'>&nbsp;";
                         wind += jsonObj.weather.winddirection;
                     }
                     if (isPhone && maxG != "-" && maxG != wind.split(" ")[0])
