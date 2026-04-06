@@ -117,7 +117,8 @@
             #weather-table td:last-child   { font-size: 16pt; font-weight: bold; text-align: right; white-space: nowrap; padding-left: 4px; padding-right: 8px; }
             #wind-row td:last-child        { font-size: 13pt !important; }
             #wind button { width: 27px !important; height: 27px !important; font-size: 9pt !important; color: white !important; }
-            #date-line   { font-size: 62% !important; text-align: center; margin: 4px 0 0 0; }
+            #title-sub   { margin-top: -15px !important; }
+            #date-line   { font-size: 62% !important; text-align: center; margin: 20px 0 0 0; }
             #current-header { font-size: 62% !important; }
         }
     </style>
@@ -265,7 +266,7 @@
         var ar = Math.round(len * 0.35);
         var ax = bx + Math.round(ar * Math.cos(rad));
         var ay = by - Math.round(ar * Math.sin(rad));
-        return '<svg width="'+w+'" height="'+h+'" viewBox="0 0 '+w+' '+h+'" style="width:'+w+'px;height:'+h+'px;vertical-align:text-top;flex-shrink:0">' +
+        return '<svg width="'+w+'" height="'+h+'" viewBox="0 0 '+w+' '+h+'" style="width:'+w+'px;height:'+h+'px;vertical-align:text-top;position:relative;top:-5px;flex-shrink:0">' +
                '<line x1="'+bx+'" y1="'+by+'" x2="'+(bx+len)+'" y2="'+by+'" stroke="currentColor" stroke-width="2"/>' +
                '<line x1="'+bx+'" y1="'+by+'" x2="'+x2+'" y2="'+y2+'" stroke="currentColor" stroke-width="2"/>' +
                '<path d="M'+(bx+ar)+','+by+' A'+ar+','+ar+' 0 0,1 '+ax+','+ay+'" stroke="currentColor" stroke-width="1.5" fill="none"/>' +
