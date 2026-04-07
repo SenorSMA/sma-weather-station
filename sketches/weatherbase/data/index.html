@@ -266,10 +266,11 @@
         var ar = Math.round(len * 0.35);
         var ax = bx + Math.round(ar * Math.cos(rad));
         var ay = by - Math.round(ar * Math.sin(rad));
-        return '<svg width="'+w+'" height="'+h+'" viewBox="0 0 '+w+' '+h+'" style="width:'+w+'px;height:'+h+'px;vertical-align:text-top;position:relative;top:-5px;left:4px;flex-shrink:0">' +
+        var sweep = deg >= 0 ? 1 : 0;   // arc above baseline for positive, below for negative
+        return '<svg width="'+w+'" height="'+h+'" viewBox="0 0 '+w+' '+h+'" overflow="visible" style="width:'+w+'px;height:'+h+'px;vertical-align:text-top;position:relative;top:-5px;left:4px;flex-shrink:0">' +
                '<line x1="'+bx+'" y1="'+by+'" x2="'+(bx+len)+'" y2="'+by+'" stroke="currentColor" stroke-width="2"/>' +
                '<line x1="'+bx+'" y1="'+by+'" x2="'+x2+'" y2="'+y2+'" stroke="currentColor" stroke-width="2"/>' +
-               '<path d="M'+(bx+ar)+','+by+' A'+ar+','+ar+' 0 0,1 '+ax+','+ay+'" stroke="currentColor" stroke-width="1.5" fill="none"/>' +
+               '<path d="M'+(bx+ar)+','+by+' A'+ar+','+ar+' 0 0,'+sweep+' '+ax+','+ay+'" stroke="currentColor" stroke-width="1.5" fill="none"/>' +
                '</svg>';
     }
 
