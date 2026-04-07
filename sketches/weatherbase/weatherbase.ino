@@ -31,9 +31,9 @@
 
 //  Forecast configuration
 //  To enable: set USEFORECAST to 1, define LATITUDE, LONGITUDE, and set APIKEY in secrets.h
-#define USEFORECAST      0
+#define USEFORECAST      1
 #define FORECASTNUMDAYS  16
-#define APIKEY           "APIKEY"
+#define APIKEY           OWM_APIKEY
 
 //  JSONBin configuration for remote access
 const char* jsonbinURL            = "https://api.jsonbin.io/v3/b/696e511cae596e708fe6da08";
@@ -191,6 +191,7 @@ class WeatherWebServer : public BolbroWebServer {
 
     void begin() {
       on("/",                         [this]() { loadFromSpiffs("/index.html"); });
+      on("/forecast.html",            [this]() { loadFromSpiffs("/forecast.html"); });
       on("/administration.html",      [this]() { CHECKLOCALACCESS loadFromSpiffs("/administration.html"); });
       on("/aztec-background.jpg",       [this]() { loadFromSpiffs("/aztec-background.jpg"); });
       on("/aztec-background-gray.jpg",  [this]() { loadFromSpiffs("/aztec-background-gray.jpg"); });
