@@ -32,7 +32,7 @@
 //  Forecast configuration
 //  To enable: set USEFORECAST to 1, define LATITUDE, LONGITUDE, and set APIKEY in secrets.h
 #define USEFORECAST      1
-#define FORECASTNUMDAYS  16
+#define FORECASTNUMDAYS  6
 #define APIKEY           OWM_APIKEY
 
 //  JSONBin configuration for remote access

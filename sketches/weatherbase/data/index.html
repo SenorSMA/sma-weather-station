@@ -63,6 +63,21 @@
             -webkit-tap-highlight-color: transparent;
         }
 
+        #forecast-btn {
+            position: absolute;
+            left: 5px;
+            top: 1px;
+            background-color: transparent;
+            border: none;
+            font-size: 28pt;
+            cursor: pointer;
+            padding: 12px;
+            line-height: 1;
+            -webkit-tap-highlight-color: transparent;
+            text-decoration: none;
+            color: inherit;
+        }
+
         .layout {
             display: grid;
             grid-template-rows: auto;
@@ -131,6 +146,7 @@
 
         <div class="item-header">
             <div class="title-banner">
+                <a id="forecast-btn" href="forecast.html" title="5-Day Forecast">&#8594;</a>
                 <!-- Flag shows the language you can switch TO, not the current language -->
                 <button id="lang-toggle" onclick="toggleLanguage()">🇺🇸</button>
                 <center><h1 id="title-main" style="font-size: 135%; color:#4A4038">SMA Weather</h1></center>

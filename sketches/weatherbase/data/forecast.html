@@ -116,7 +116,7 @@
         </div>
 
         <div class="item-forecast">
-            <h3 id="forecast-header" style="font-size: 55%; text-align: center; color: #4A4038;">16-Day Forecast</h3>
+            <h3 id="forecast-header" style="font-size: 55%; text-align: center; color: #4A4038;">5-Day Forecast</h3>
             <table id="forecast-table" class="forecast-table"></table>
             <p style="font-size: 40%; color: #5A4F47; margin-top: 10px;">
                 <em>Data from <span id="station">-</span> (<a target="_blank" rel="noopener noreferrer" href="http://openweathermap.org">openweathermap.org</a>)</em>
@@ -132,7 +132,6 @@
 <script>
     const LATITUDE   = 20.92;
     const LONGITUDE  = -100.74;
-    const NUMDAYS    = 16;
     const APIKEY     = "209bf19664d8744294dd1bcd791208c9";
 
     let windSpeedUnit = "mph";
@@ -149,13 +148,54 @@
         xhttp.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
                 var jsonObj = JSON.parse(this.responseText);
-                var table = "";
 
                 document.getElementById("station").innerHTML = jsonObj.city.name;
 
+                // Group 3-hour intervals into calendar days
+                var days = {};
+                var dayOrder = [];
+
                 for (let i = 0; i < jsonObj.list.length; i++) {
-                    var datestr   = new Date(jsonObj.list[i].dt * 1000).toLocaleDateString('en-US', dateoptions);
-                    var dayofweek = new Date(jsonObj.list[i].dt * 1000).getDay();
+                    var item = jsonObj.list[i];
+                    var date = new Date(item.dt * 1000);
+                    var dateKey = date.toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' });
+
+                    if (!days[dateKey]) {
+                        days[dateKey] = {
+                            dt:          item.dt,
+                            tempMin:     item.main.temp_min,
+                            tempMax:     item.main.temp_max,
+                            rain:        0,
+                            windSpeed:   item.wind.speed,
+                            windDeg:     item.wind.deg,
+                            icon:        item.weather[0].icon,
+                            middayDiff:  999
+                        };
+                        dayOrder.push(dateKey);
+                    }
+
+                    var d = days[dateKey];
+                    d.tempMin = Math.min(d.tempMin, item.main.temp_min);
+                    d.tempMax = Math.max(d.tempMax, item.main.temp_max);
+                    if (item.rain && item.rain["3h"]) d.rain += item.rain["3h"];
+
+                    // Pick icon, wind from interval closest to noon
+                    var hour = date.getHours();
+                    var diff = Math.abs(hour - 12);
+                    if (diff < d.middayDiff) {
+                        d.middayDiff = diff;
+                        d.icon       = item.weather[0].icon;
+                        d.windSpeed  = item.wind.speed;
+                        d.windDeg    = item.wind.deg;
+                    }
+                }
+
+                var table = "";
+                for (let k = 0; k < dayOrder.length; k++) {
+                    var d = days[dayOrder[k]];
+                    var date      = new Date(d.dt * 1000);
+                    var datestr   = date.toLocaleDateString('en-US', dateoptions);
+                    var dayofweek = date.getDay();
 
                     if (datestr == todaydatestr)         datestr = "Today";
                     else if (datestr == tomorrowdatestr) datestr = "Tomorrow";
@@ -166,14 +206,14 @@
 
                     table += "<td><nobr>" + datestr + "</nobr></td>";
 
-                    // Weather icon
-                    var icon = jsonObj.list[i].weather[0].icon;
+                    // Weather icon — force daytime variant
+                    var icon = d.icon;
                     if (!icon.endsWith("d")) icon = icon.slice(0, -1) + "d";
                     table += "<td><img src='WeatherIcon" + icon + ".png' height='80'></td>";
 
                     // Temperature high/low
-                    var hiF  = ((jsonObj.list[i].temp.max * 9/5) + 32).toFixed(0);
-                    var loF  = ((jsonObj.list[i].temp.min * 9/5) + 32).toFixed(0);
+                    var hiF = ((d.tempMax * 9/5) + 32).toFixed(0);
+                    var loF = ((d.tempMin * 9/5) + 32).toFixed(0);
                     table += "<td><nobr>" +
                         "<span style='color:#b85042'>" + hiF + "</span>" +
                         " <span class='bslash'>/</span> " +
@@ -182,26 +222,22 @@
 
                     // Wind speed + direction
                     var windspeed = "-";
-                    var windspeedval = jsonObj.list[i].speed;
-                    if (windspeedval != null && windspeedval != "-") {
+                    if (d.windSpeed != null) {
                         switch(windSpeedUnit) {
-                            case "mph": windspeed = (windspeedval * 2.23694).toFixed(1) + " mph"; break;
-                            case "m/s": windspeed = windspeedval.toFixed(1) + " <sup>m</sup><span class='bslash'>&frasl;</span><sub>s</sub>"; break;
-                            case "kn":  windspeed = (windspeedval * 1.94384).toFixed(1) + " kn"; break;
+                            case "mph": windspeed = (d.windSpeed * 2.23694).toFixed(1) + " mph"; break;
+                            case "m/s": windspeed = d.windSpeed.toFixed(1) + " <sup>m</sup><span class='bslash'>&frasl;</span><sub>s</sub>"; break;
+                            case "kn":  windspeed = (d.windSpeed * 1.94384).toFixed(1) + " kn"; break;
                         }
                     }
-                    if (jsonObj.list[i].deg != null && jsonObj.list[i].deg != "-") {
-                        var winddeg   = jsonObj.list[i].deg;
+                    if (d.windDeg != null) {
                         var windabbr  = ['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSW','SW','WSW','W','WNW','NW','NNW'];
-                        var windindex = Math.round(((winddeg %= 360) < 0 ? winddeg + 360 : winddeg) / 22.5) % 16;
+                        var windindex = Math.round(((d.windDeg % 360 + 360) % 360) / 22.5) % 16;
                         windspeed += " <img src='wind" + windabbr[windindex] + ".png' height='32' style='vertical-align:middle'> <nobr>" + windabbr[windindex] + "</nobr>";
                     }
                     table += "<td>" + windspeed + "</td>";
 
                     // Rain
-                    var rain = "-";
-                    if (jsonObj.list[i].rain != undefined)
-                        rain = jsonObj.list[i].rain.toFixed(1) + " mm";
+                    var rain = d.rain > 0 ? d.rain.toFixed(1) + " mm" : "-";
                     table += rain != "-"
                         ? "<td><img src='raindrop.png' height='40' style='vertical-align:middle'> " + rain + "</td>"
                         : "<td>" + rain + "</td>";
@@ -212,8 +248,8 @@
             }
         };
         xhttp.open("GET",
-            "https://api.openweathermap.org/data/2.5/forecast/daily?lat=" + LATITUDE +
-            "&lon=" + LONGITUDE + "&cnt=" + NUMDAYS + "&appid=" + APIKEY + "&units=metric", true);
+            "https://api.openweathermap.org/data/2.5/forecast?lat=" + LATITUDE +
+            "&lon=" + LONGITUDE + "&cnt=40&appid=" + APIKEY + "&units=metric", true);
         xhttp.send();
     }
 

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wind Row Preview</title>
+<style>
+    body {
+        background-color: #C4B5A8;
+        font-family: 'Bodoni MT', Didot, 'Book Antiqua', Georgia, serif;
+        font-size: 20pt;
+        color: #3D3630;
+        margin: 0;
+        padding: 16px;
+    }
+    h3 { font-size: 14pt; color: #666; margin: 24px 0 6px 0; border-bottom: 1px solid #999; padding-bottom: 4px; }
+    table {
+        width: 100%;
+        table-layout: fixed;
+        margin: 0;
+        border-spacing: 0;
+    }
+    td { padding-bottom: 8px; }
+    td:nth-child(1) { width: 44px; padding: 4px 2px 4px 0; text-align: left; }
+    td:nth-child(1) img { display: block; height: 64px; width: auto; }
+    td:nth-child(2) { width: 42%; font-size: 18pt; font-weight: bold; padding-right: 2px; padding-left: 8px; white-space: nowrap; }
+    td:last-child   { font-size: 13pt; font-weight: bold; text-align: right; white-space: nowrap; padding-left: 4px; padding-right: 8px; }
+    .label { color: #555; font-size: 11pt; margin: 4px 0 2px 0; }
+</style>
+</head>
+<body>
+
+<h3>Without gusts</h3>
+<table>
+  <tr>
+    <td><img src="sketches/weatherbase/data/wind.png"></td>
+    <td>Wind</td>
+    <td>
+      12.3
+      <button style="background-color:#5b7c99;color:white;font-size:9pt;padding:0;border-radius:50%;width:27px;height:27px;border:none;display:inline-flex;align-items:center;justify-content:center;line-height:1;">mph</button>
+      <img src="sketches/weatherbase/data/windNE.png" height="22" style="vertical-align:middle">&nbsp;NE
+    </td>
+  </tr>
+</table>
+
+<h3>With gusts (↑ format)</h3>
+<table>
+  <tr>
+    <td><img src="sketches/weatherbase/data/wind.png"></td>
+    <td>Wind</td>
+    <td>
+      12.3
+      <button style="background-color:#5b7c99;color:white;font-size:9pt;padding:0;border-radius:50%;width:27px;height:27px;border:none;display:inline-flex;align-items:center;justify-content:center;line-height:1;">mph</button>
+      <img src="sketches/weatherbase/data/windNE.png" height="22" style="vertical-align:middle">&nbsp;NE ↑18.5
+    </td>
+  </tr>
+</table>
+
+<h3>Worst case — long direction (NNW) + gusts</h3>
+<table>
+  <tr>
+    <td><img src="sketches/weatherbase/data/wind.png"></td>
+    <td>Wind</td>
+    <td>
+      12.3
+      <button style="background-color:#5b7c99;color:white;font-size:9pt;padding:0;border-radius:50%;width:27px;height:27px;border:none;display:inline-flex;align-items:center;justify-content:center;line-height:1;">mph</button>
+      <img src="sketches/weatherbase/data/windNNW.png" height="22" style="vertical-align:middle">&nbsp;NNW ↑18.5
+    </td>
+  </tr>
+</table>
+
+</body>
+</html>
