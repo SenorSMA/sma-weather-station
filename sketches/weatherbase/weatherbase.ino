@@ -429,6 +429,8 @@ void setup() {
   Serial.println("Weather setup...");
   Bolbro.connectToWiFi();
   Bolbro.configureTime();
+  setenv("TZ", "CST6", 1);   // Mexico Central Time — UTC-6, no DST since 2023
+  tzset();
   calibrationPacket.restore();
   Serial.printf("Base setup...\n");
   HC12.begin();
