@@ -235,9 +235,7 @@
 
                     // Rain
                     var rain = d.rain > 0 ? d.rain.toFixed(1) + " <span style='font-size:0.8em'>mm</span>" : "-";
-                    table += rain != "-"
-                        ? "<td><img src='raindrop.png' height='40' class='raindrop-img' style='vertical-align:middle'> " + rain + "</td>"
-                        : "<td>" + rain + "</td>";
+                    table += "<td>" + rain + "</td>";
 
                     table += "</tr>\n";
                 }
