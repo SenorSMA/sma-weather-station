@@ -419,8 +419,21 @@
     function getWeatherData() {
         var xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function() {
-            if (this.readyState == 4 && this.status == 200) {
-                var response = JSON.parse(this.responseText);
+            if (this.readyState == 4) {
+                if (this.status !== 200) {
+                    var el = document.getElementById("message");
+                    el.innerHTML = "DATA ERROR: HTTP " + this.status + " — " + this.responseText.substring(0, 120);
+                    el.hidden = false;
+                    return;
+                }
+                var response;
+                try { response = JSON.parse(this.responseText); }
+                catch(e) {
+                    var el = document.getElementById("message");
+                    el.innerHTML = "DATA ERROR: JSON parse failed — " + e.message;
+                    el.hidden = false;
+                    return;
+                }
                 var jsonObj  = response.record || response;
 
                 if (jsonObj.message != undefined && jsonObj.message != "")
