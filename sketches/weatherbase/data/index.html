@@ -534,6 +534,7 @@
                     document.getElementById("message").hidden = true;
 
                 cachedWeatherObj = jsonObj;
+                var isPhone = window.innerWidth <= 600;
                 renderCurrentConditions(jsonObj);
 
                 var sun = "-";
