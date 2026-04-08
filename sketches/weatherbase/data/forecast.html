@@ -81,8 +81,8 @@
         .item-footer   { grid-area: footer;   padding-left: 2em; padding-right: 2em; }
 
         .forecast-table { border-spacing: 0; width: 90%; margin: 0 auto; }
-        .forecast-table td        { font-size: 35pt; font-weight: bold; padding: 10px; background-color: transparent; font-family: 'Bodoni MT', Didot, 'Book Antiqua', Georgia, serif; }
-        .forecast-weekend-row td  { font-size: 35pt; font-weight: bold; padding: 10px; background-color: transparent; font-family: 'Bodoni MT', Didot, 'Book Antiqua', Georgia, serif; }
+        .forecast-table td        { font-size: 32pt; font-weight: normal; padding: 10px; background-color: transparent; font-family: 'Bodoni MT', Didot, 'Book Antiqua', Georgia, serif; }
+        .forecast-weekend-row td  { font-size: 32pt; font-weight: normal; padding: 10px; background-color: transparent; font-family: 'Bodoni MT', Didot, 'Book Antiqua', Georgia, serif; }
 
         .bslash { -webkit-text-stroke: 0.7px currentColor; font-weight: bold; }
 
@@ -219,7 +219,7 @@
                         "<span style='color:#5b7c99'>" + loF + "</span>" +
                         " &#8457;</nobr></td>";
 
-                    // Wind speed + direction
+                    // Wind speed
                     var windspeed = "-";
                     if (d.windSpeed != null) {
                         switch(windSpeedUnit) {
@@ -227,11 +227,6 @@
                             case "m/s": windspeed = d.windSpeed.toFixed(1) + " <sup>m</sup><span class='bslash'>&frasl;</span><sub>s</sub>"; break;
                             case "kn":  windspeed = (d.windSpeed * 1.94384).toFixed(1) + " kn"; break;
                         }
-                    }
-                    if (d.windDeg != null) {
-                        var windabbr  = ['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSW','SW','WSW','W','WNW','NW','NNW'];
-                        var windindex = Math.round(((d.windDeg % 360 + 360) % 360) / 22.5) % 16;
-                        windspeed += " <img src='wind" + windabbr[windindex] + ".png' height='32' style='vertical-align:middle'> <nobr>" + windabbr[windindex] + "</nobr>";
                     }
                     table += "<td>" + windspeed + "</td>";
 
