@@ -324,9 +324,11 @@
         if (!gustHistory.length) return "-";
         const maxMps = Math.max(...gustHistory.map(g => g.v));
         switch(unit) {
-            case "mph": return (maxMps * 2.23694).toFixed(1);
-            case "m/s": return maxMps.toFixed(1);
-            case "kn":  return (maxMps * 1.94384).toFixed(1);
+            case "mph":  return (maxMps * 2.23694).toFixed(1);
+            case "m/s":  return maxMps.toFixed(1);
+            case "kn":   return (maxMps * 1.94384).toFixed(1);
+            case "km/h": return (maxMps * 3.6).toFixed(1);
+            default:     return "-";
         }
     }
 
