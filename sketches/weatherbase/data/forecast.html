@@ -99,6 +99,7 @@
             .forecast-table td       { font-size: 16pt; font-weight: bold; padding: 6px 4px; background-color: transparent; font-family: 'Bodoni MT', Didot, 'Book Antiqua', Georgia, serif; }
             .forecast-weekend-row td { font-size: 16pt; font-weight: bold; padding: 6px 4px; background-color: transparent; font-family: 'Bodoni MT', Didot, 'Book Antiqua', Georgia, serif; }
             .forecast-header-row td  { font-size: 11pt; padding: 2px 4px 0 4px; }
+            .raindrop-img            { height: 12px !important; }
             #forecast-header { font-size: 62% !important; }
         }
     </style>
@@ -235,7 +236,7 @@
                     // Rain
                     var rain = d.rain > 0 ? d.rain.toFixed(1) + " <span style='font-size:0.8em'>mm</span>" : "-";
                     table += rain != "-"
-                        ? "<td><img src='raindrop.png' height='40' style='vertical-align:middle'> " + rain + "</td>"
+                        ? "<td><img src='raindrop.png' height='40' class='raindrop-img' style='vertical-align:middle'> " + rain + "</td>"
                         : "<td>" + rain + "</td>";
 
                     table += "</tr>\n";
