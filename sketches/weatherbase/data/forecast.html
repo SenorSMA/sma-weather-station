@@ -65,6 +65,19 @@
             color: inherit;
         }
 
+        #lang-toggle {
+            position: absolute;
+            right: 3px;
+            top: 1px;
+            background-color: transparent;
+            border: none;
+            font-size: 28pt;
+            cursor: pointer;
+            padding: 12px;
+            line-height: 1;
+            -webkit-tap-highlight-color: transparent;
+        }
+
         .layout {
             display: grid;
             grid-template-rows: auto;
@@ -110,6 +123,7 @@
             /* Reset desktop shift on temp column for phone */
             .forecast-table tr:not(.forecast-header-row) td:nth-child(3)  { padding-left: 4px; }
             .raindrop-img            { height: 12px !important; }
+            .forecast-table td img   { height: 51px !important; }
             #forecast-header { font-size: 62% !important; }
         }
     </style>
@@ -123,6 +137,7 @@
         <div class="item-header">
             <div class="title-banner">
                 <a id="back-btn" href="index.html" title="Back to Current Conditions">&#8592;</a>
+                <button id="lang-toggle" onclick="toggleLanguage()">🇲🇽</button>
                 <center><h1 id="title-main" style="font-size: 135%; color:#4A4038">SMA Weather</h1></center>
                 <center><h3 id="title-sub" style="font-size: 60%; color:#5A4F47; margin-top: -35px; margin-bottom: 2px;">Central Mexico 6,614 ft</h3></center>
             </div>
@@ -132,12 +147,12 @@
             <h3 id="forecast-header" style="font-size: 55%; text-align: center; color: #4A4038;">5-Day Forecast</h3>
             <table id="forecast-table" class="forecast-table"></table>
             <p style="font-size: 40%; color: #5A4F47; margin-top: 10px;">
-                <em>Data from <span id="station">-</span> (<a target="_blank" rel="noopener noreferrer" href="http://openweathermap.org">openweathermap.org</a>)</em>
+                <em><span id="lbl-datafrom">Data from</span> <span id="station">-</span> (<a target="_blank" rel="noopener noreferrer" href="http://openweathermap.org">openweathermap.org</a>)</em>
             </p>
         </div>
 
         <div class="item-footer">
-            <p style="font-size: 40%; text-align: center; color: #5A4F47;">© 2026 SMA Weather</p>
+            <p id="footer-text" style="font-size: 40%; text-align: center; color: #5A4F47;">© 2026 SMA Weather</p>
         </div>
 
     </div>
@@ -148,13 +163,119 @@
     const APIKEY     = "209bf19664d8744294dd1bcd791208c9";
 
     let windSpeedUnit = "mph";
+    let currentLang   = "en";
+    let cachedDays    = null;
+    let cachedOrder   = null;
 
-    const dateoptions     = { weekday: 'short', day: 'numeric' };
-    const todaydate       = new Date();
-    const todaydatestr    = todaydate.toLocaleDateString('en-US', dateoptions);
-    const tomorrowdate    = new Date();
-    tomorrowdate.setDate(tomorrowdate.getDate() + 1);
-    const tomorrowdatestr = tomorrowdate.toLocaleDateString('en-US', dateoptions);
+    const dateoptions = { weekday: 'short', day: 'numeric' };
+    const todaydate   = new Date();
+    const todaydatestr = todaydate.toLocaleDateString('en-US', dateoptions);
+
+    function formatDateForLang(dateStr, lang) {
+        if (dateStr === "-" || lang === "en") return dateStr;
+        const days   = { "Sun":"Dom","Mon":"Lun","Tue":"Mar","Wed":"Mié","Thu":"Jue","Fri":"Vie","Sat":"Sáb" };
+        const months = { "Jan":"ene","Feb":"feb","Mar":"mar","Apr":"abr","May":"may","Jun":"jun",
+                         "Jul":"jul","Aug":"ago","Sep":"sep","Oct":"oct","Nov":"nov","Dec":"dic" };
+        let result = dateStr;
+        for (const [en, es] of Object.entries(days))   result = result.replace(en, es);
+        for (const [en, es] of Object.entries(months)) result = result.replace(en, es);
+        return result;
+    }
+
+    const translations = {
+        en: {
+            titleMain:     "SMA Weather",
+            titleSub:      "Central Mexico 6,614 ft",
+            forecastHeader:"5-Day Forecast",
+            tempCol:       "Temp",
+            windCol:       "Wind",
+            rainCol:       "Rain",
+            dataFrom:      "Data from",
+            footer:        "© 2026 SMA Weather",
+            toggleButton:  "🇲🇽",
+            today:         "Today"
+        },
+        es: {
+            titleMain:     "Clima SMA",
+            titleSub:      "México Central 6,614 pies",
+            forecastHeader:"Pronóstico 5 Días",
+            tempCol:       "Temp",
+            windCol:       "Viento",
+            rainCol:       "Lluvia",
+            dataFrom:      "Datos de",
+            footer:        "© 2026 Clima SMA",
+            toggleButton:  "🇺🇸",
+            today:         "Hoy"
+        }
+    };
+
+    function applyLanguage() {
+        const t = translations[currentLang];
+        document.getElementById("title-main").innerText    = t.titleMain;
+        document.getElementById("title-sub").innerText     = t.titleSub;
+        document.getElementById("forecast-header").innerText = t.forecastHeader;
+        document.getElementById("lbl-datafrom").innerText  = t.dataFrom;
+        document.getElementById("footer-text").innerHTML   = t.footer;
+        document.getElementById("lang-toggle").innerText   = t.toggleButton;
+        if (cachedDays) buildTable();
+    }
+
+    function toggleLanguage() {
+        currentLang = currentLang === "en" ? "es" : "en";
+        applyLanguage();
+    }
+
+    function buildTable() {
+        const t = translations[currentLang];
+        var table = "<tr class='forecast-header-row'><td></td><td></td>" +
+            "<td>" + t.tempCol + " <span style='font-size:0.8em'>&#8457;</span></td>" +
+            "<td>" + t.windCol + " <span style='font-size:0.8em'>mph</span></td>" +
+            "<td>" + t.rainCol + " <span style='font-size:0.8em'>mm</span></td></tr>\n";
+
+        for (let k = 0; k < cachedOrder.length; k++) {
+            var d = cachedDays[cachedOrder[k]];
+            var date      = new Date(d.dt * 1000);
+            var datestr   = date.toLocaleDateString('en-US', dateoptions);
+            var dayofweek = date.getDay();
+
+            if (datestr == todaydatestr) datestr = t.today;
+            else datestr = formatDateForLang(datestr, currentLang);
+
+            table += (dayofweek == 0 || dayofweek == 6)
+                ? "<tr class='forecast-weekend-row'>"
+                : "<tr>";
+
+            table += "<td><nobr>" + datestr + "</nobr></td>";
+
+            var icon = d.icon;
+            if (!icon.endsWith("d")) icon = icon.slice(0, -1) + "d";
+            table += "<td><img src='WeatherIcon" + icon + ".png' height='64'></td>";
+
+            var hiF = ((d.tempMax * 9/5) + 32).toFixed(0);
+            var loF = ((d.tempMin * 9/5) + 32).toFixed(0);
+            table += "<td><nobr>" +
+                "<span style='color:#b85042'>" + hiF + "</span>" +
+                " <span class='bslash'>/</span> " +
+                "<span style='color:#5b7c99'>" + loF + "</span>" +
+                "</nobr></td>";
+
+            var windspeed = "-";
+            if (d.windSpeed != null) {
+                switch(windSpeedUnit) {
+                    case "mph": windspeed = (d.windSpeed * 2.23694).toFixed(1); break;
+                    case "m/s": windspeed = d.windSpeed.toFixed(1); break;
+                    case "kn":  windspeed = (d.windSpeed * 1.94384).toFixed(1); break;
+                }
+            }
+            table += "<td>" + windspeed + "</td>";
+
+            var rain = d.rain > 0 ? d.rain.toFixed(1) : "-";
+            table += "<td>" + rain + "</td>";
+
+            table += "</tr>\n";
+        }
+        document.getElementById("forecast-table").innerHTML = table;
+    }
 
     function loadForecast() {
         var xhttp = new XMLHttpRequest();
@@ -165,34 +286,33 @@
                 document.getElementById("station").innerHTML = jsonObj.city.name;
 
                 // Group 3-hour intervals into calendar days
-                var days = {};
-                var dayOrder = [];
+                cachedDays  = {};
+                cachedOrder = [];
 
                 for (let i = 0; i < jsonObj.list.length; i++) {
                     var item = jsonObj.list[i];
                     var date = new Date(item.dt * 1000);
                     var dateKey = date.toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' });
 
-                    if (!days[dateKey]) {
-                        days[dateKey] = {
-                            dt:          item.dt,
-                            tempMin:     item.main.temp_min,
-                            tempMax:     item.main.temp_max,
-                            rain:        0,
-                            windSpeed:   item.wind.speed,
-                            windDeg:     item.wind.deg,
-                            icon:        item.weather[0].icon,
-                            middayDiff:  999
+                    if (!cachedDays[dateKey]) {
+                        cachedDays[dateKey] = {
+                            dt:         item.dt,
+                            tempMin:    item.main.temp_min,
+                            tempMax:    item.main.temp_max,
+                            rain:       0,
+                            windSpeed:  item.wind.speed,
+                            windDeg:    item.wind.deg,
+                            icon:       item.weather[0].icon,
+                            middayDiff: 999
                         };
-                        dayOrder.push(dateKey);
+                        cachedOrder.push(dateKey);
                     }
 
-                    var d = days[dateKey];
+                    var d = cachedDays[dateKey];
                     d.tempMin = Math.min(d.tempMin, item.main.temp_min);
                     d.tempMax = Math.max(d.tempMax, item.main.temp_max);
                     if (item.rain && item.rain["3h"]) d.rain += item.rain["3h"];
 
-                    // Pick icon, wind from interval closest to noon
                     var hour = date.getHours();
                     var diff = Math.abs(hour - 12);
                     if (diff < d.middayDiff) {
@@ -203,53 +323,7 @@
                     }
                 }
 
-                var table = "<tr class='forecast-header-row'><td></td><td></td><td>Temp <span style='font-size:0.8em'>&#8457;</span></td><td>Wind <span style='font-size:0.8em'>mph</span></td><td>Rain <span style='font-size:0.8em'>mm</span></td></tr>\n";
-                for (let k = 0; k < dayOrder.length; k++) {
-                    var d = days[dayOrder[k]];
-                    var date      = new Date(d.dt * 1000);
-                    var datestr   = date.toLocaleDateString('en-US', dateoptions);
-                    var dayofweek = date.getDay();
-
-                    if (datestr == todaydatestr) datestr = "Today";
-
-                    table += (dayofweek == 0 || dayofweek == 6)
-                        ? "<tr class='forecast-weekend-row'>"
-                        : "<tr>";
-
-                    table += "<td><nobr>" + datestr + "</nobr></td>";
-
-                    // Weather icon — force daytime variant
-                    var icon = d.icon;
-                    if (!icon.endsWith("d")) icon = icon.slice(0, -1) + "d";
-                    table += "<td><img src='WeatherIcon" + icon + ".png' height='64'></td>";
-
-                    // Temperature high/low
-                    var hiF = ((d.tempMax * 9/5) + 32).toFixed(0);
-                    var loF = ((d.tempMin * 9/5) + 32).toFixed(0);
-                    table += "<td><nobr>" +
-                        "<span style='color:#b85042'>" + hiF + "</span>" +
-                        " <span class='bslash'>/</span> " +
-                        "<span style='color:#5b7c99'>" + loF + "</span>" +
-                        "</nobr></td>";
-
-                    // Wind speed
-                    var windspeed = "-";
-                    if (d.windSpeed != null) {
-                        switch(windSpeedUnit) {
-                            case "mph": windspeed = (d.windSpeed * 2.23694).toFixed(1); break;
-                            case "m/s": windspeed = d.windSpeed.toFixed(1); break;
-                            case "kn":  windspeed = (d.windSpeed * 1.94384).toFixed(1); break;
-                        }
-                    }
-                    table += "<td>" + windspeed + "</td>";
-
-                    // Rain
-                    var rain = d.rain > 0 ? d.rain.toFixed(1) : "-";
-                    table += "<td>" + rain + "</td>";
-
-                    table += "</tr>\n";
-                }
-                document.getElementById("forecast-table").innerHTML = table;
+                buildTable();
             }
         };
         xhttp.open("GET",
