@@ -81,8 +81,8 @@
         .item-footer   { grid-area: footer;   padding-left: 2em; padding-right: 2em; }
 
         .forecast-table { border-spacing: 0; width: 90%; margin: 0 auto; }
-        .forecast-table td        { font-size: 35pt; padding: 10px; background-color: transparent; font-family: 'Bodoni MT', Didot, 'Book Antiqua', Georgia, serif; }
-        .forecast-weekend-row td  { font-size: 35pt; padding: 10px; background-color: transparent; font-family: 'Bodoni MT', Didot, 'Book Antiqua', Georgia, serif; }
+        .forecast-table td        { font-size: 35pt; font-weight: bold; padding: 10px; background-color: transparent; font-family: 'Bodoni MT', Didot, 'Book Antiqua', Georgia, serif; }
+        .forecast-weekend-row td  { font-size: 35pt; font-weight: bold; padding: 10px; background-color: transparent; font-family: 'Bodoni MT', Didot, 'Book Antiqua', Georgia, serif; }
 
         .bslash { -webkit-text-stroke: 0.7px currentColor; font-weight: bold; }
 
@@ -95,8 +95,8 @@
             .title-banner  { margin: 0 0.2em 8px 0.2em; }
             #title-sub     { margin-top: -15px !important; }
             .forecast-table { width: 100%; }
-            .forecast-table td       { font-size: 16pt; padding: 6px 4px; background-color: transparent; font-family: 'Bodoni MT', Didot, 'Book Antiqua', Georgia, serif; }
-            .forecast-weekend-row td { font-size: 16pt; padding: 6px 4px; background-color: transparent; font-family: 'Bodoni MT', Didot, 'Book Antiqua', Georgia, serif; }
+            .forecast-table td       { font-size: 16pt; font-weight: bold; padding: 6px 4px; background-color: transparent; font-family: 'Bodoni MT', Didot, 'Book Antiqua', Georgia, serif; }
+            .forecast-weekend-row td { font-size: 16pt; font-weight: bold; padding: 6px 4px; background-color: transparent; font-family: 'Bodoni MT', Didot, 'Book Antiqua', Georgia, serif; }
             #forecast-header { font-size: 62% !important; }
         }
     </style>
@@ -197,8 +197,7 @@
                     var datestr   = date.toLocaleDateString('en-US', dateoptions);
                     var dayofweek = date.getDay();
 
-                    if (datestr == todaydatestr)         datestr = "Today";
-                    else if (datestr == tomorrowdatestr) datestr = "Tomorrow";
+                    if (datestr == todaydatestr) datestr = "Today";
 
                     table += (dayofweek == 0 || dayofweek == 6)
                         ? "<tr class='forecast-weekend-row'>"
@@ -209,7 +208,7 @@
                     // Weather icon — force daytime variant
                     var icon = d.icon;
                     if (!icon.endsWith("d")) icon = icon.slice(0, -1) + "d";
-                    table += "<td><img src='WeatherIcon" + icon + ".png' height='80'></td>";
+                    table += "<td><img src='WeatherIcon" + icon + ".png' height='64'></td>";
 
                     // Temperature high/low
                     var hiF = ((d.tempMax * 9/5) + 32).toFixed(0);
