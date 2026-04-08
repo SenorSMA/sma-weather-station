@@ -122,7 +122,6 @@
             .forecast-table tr:not(.forecast-header-row) td:nth-child(5)  { padding-left: 18px; }
             /* Reset desktop shift on temp column for phone */
             .forecast-table tr:not(.forecast-header-row) td:nth-child(3)  { padding-left: 4px; }
-            .raindrop-img            { height: 12px !important; }
             .forecast-table td img   { height: 51px !important; }
             #forecast-header { font-size: 62% !important; }
         }
@@ -301,7 +300,6 @@
                             tempMax:    item.main.temp_max,
                             rain:       0,
                             windSpeed:  item.wind.speed,
-                            windDeg:    item.wind.deg,
                             icon:       item.weather[0].icon,
                             middayDiff: 999
                         };
@@ -319,7 +317,6 @@
                         d.middayDiff = diff;
                         d.icon       = item.weather[0].icon;
                         d.windSpeed  = item.wind.speed;
-                        d.windDeg    = item.wind.deg;
                     }
                 }
 

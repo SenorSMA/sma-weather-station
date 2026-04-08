@@ -85,20 +85,16 @@
             grid-template-areas:
                 "header"
                 "current"
-                "forecast"
                 "footer";
             grid-gap: 10px;
         }
 
         .item-header   { grid-area: header;   padding-top: 1em; position: relative; }
         .item-current  { grid-area: current;  padding-left: 2em; padding-right: 2em; }
-        .item-forecast { grid-area: forecast; padding-left: 2em; padding-right: 2em; }
         .item-footer   { grid-area: footer;   padding-left: 2em; padding-right: 2em; }
 
         table { margin-left: 2em; }
         td { font-size: 35pt; padding-right: 20px; padding-bottom: 10px; }
-        .forecast-table td        { font-size: 35pt; padding: 10px; background-color: #F6F6F6; }
-        .forecast-weekend-row td  { font-size: 35pt; padding: 10px; background-color: #E6E6E6; }
 
         #weather-table {
             border-spacing: 0;
@@ -171,12 +167,6 @@
             </table>
         </div>
 
-        <div class="item-forecast" id="item_forecast" hidden>
-            <h3 id="forecast-header">Forecast</h3>
-            <table id="forecast-table" class="forecast-table"></table>
-            <p><em><span id="lbl-datafrom">Data from</span> <span id="station">-</span> (<a target="_blank" rel="noopener noreferrer" href="http://openweathermap.org">openweathermap.org</a>)</em></p>
-        </div>
-
         <div class="item-footer">
             <p id="footer-text" style="font-size: 40%; text-align: center; color: #5A4F47;">© 2026 SMA Weather</p>
         </div>
@@ -204,7 +194,6 @@
             titleMain:    "SMA Weather",
             titleSub:     "Central Mexico 6,614 ft",
             current:      "Current Conditions",
-            forecast:     "Forecast",
             temp:         "Temperature",
             humidity:     "Humidity",
             pressure:     "Pressure",
@@ -213,18 +202,13 @@
             battery:      "Battery",
             sun:          "Sun",
             sunrise:      "Sunrise&thinsp;<span class='bslash'>/</span>&thinsp;Sunset",
-            updated:      "Date/Time",
-            dataFrom:     "Data from",
             footer:       "© 2026 SMA Weather",
-            toggleButton: "🇲🇽",
-            today:        "Today",
-            tomorrow:     "Tomorrow"
+            toggleButton: "🇲🇽"
         },
         es: {
             titleMain:    "Clima SMA",
             titleSub:     "México Central 6,614 pies",
             current:      "Condiciones Actuales",
-            forecast:     "Pronóstico",
             temp:         "Temperatura",
             humidity:     "Humedad",
             pressure:     "Presión",
@@ -233,12 +217,8 @@
             battery:      "Batería",
             sun:          "Sol",
             sunrise:      "Amane&thinsp;<span class='bslash'>/</span>&thinsp;Atarde",
-            updated:      "Fecha/Hora",
-            dataFrom:     "Datos de",
             footer:       "© 2026 Clima SMA",
-            toggleButton: "🇺🇸",
-            today:        "Hoy",
-            tomorrow:     "Mañana"
+            toggleButton: "🇺🇸"
         }
     };
 
@@ -247,7 +227,6 @@
         document.getElementById("title-main").innerText     = t.titleMain;
         document.getElementById("title-sub").innerText      = t.titleSub;
         document.getElementById("current-header").innerText = t.current;
-        document.getElementById("forecast-header").innerText = t.forecast;
         document.getElementById("lbl-temp").innerHTML       = t.temp;
         document.getElementById("lbl-humidity").innerHTML   = t.humidity;
         document.getElementById("lbl-pressure").innerHTML   = t.pressure;
@@ -256,7 +235,6 @@
         document.getElementById("lbl-battery").innerHTML    = t.battery;
         document.getElementById("lbl-sun").innerHTML        = t.sun;
         document.getElementById("lbl-sunrise").innerHTML    = t.sunrise;
-        document.getElementById("lbl-datafrom").innerHTML   = t.dataFrom;
         document.getElementById("footer-text").innerHTML    = t.footer;
         document.getElementById("lang-toggle").innerText    = t.toggleButton;
         setIfChanged("updated", formatDateForLang(lastUpdatedStr, currentLang));
@@ -313,101 +291,7 @@
         }
     }
 
-    let windDirectionsArray = [
-        ['N','North'],['NNE','North-Northeast'],['NE','Northeast'],['ENE','East-Northeast'],
-        ['E','East'],['ESE','East-Southeast'],['SE','Southeast'],['SSE','South-Southeast'],
-        ['S','South'],['SSW','South-Southwest'],['SW','Southwest'],['WSW','West-Southwest'],
-        ['W','West'],['WNW','West-Northwest'],['NW','Northwest'],['NNW','North-Northwest']
-    ];
-    let windDirections = new Map(windDirectionsArray);
-    let windSpeedUnit  = "mph";
-    const coloredtemperatures = true;
-
-    function getForecastDataWithConfiguration(latitude, longitude, numdays, apikey) {
-        var xhttp = new XMLHttpRequest();
-        xhttp.onreadystatechange = function() {
-            if (this.readyState == 4 && this.status == 200) {
-                var jsonObj = JSON.parse(this.responseText);
-                var table = "";
-                const dateoptions    = { weekday: 'short', day: 'numeric' };
-                const todaydate      = new Date();
-                const todaydatestr   = todaydate.toLocaleDateString('en-US', dateoptions);
-                const tomorrowdate   = new Date();
-                tomorrowdate.setDate(tomorrowdate.getDate() + 1);
-                const tomorrowdatestr = tomorrowdate.toLocaleDateString('en-US', dateoptions);
-                const t = translations[currentLang];
-
-                document.getElementById("station").innerHTML = jsonObj.city.name;
-
-                for (let i = 0; i < jsonObj.list.length; i++) {
-                    var datestr  = new Date(jsonObj.list[i].dt*1000).toLocaleDateString('en-US', dateoptions);
-                    var dayofweek = new Date(jsonObj.list[i].dt*1000).getDay();
-
-                    if (datestr == todaydatestr)        datestr = t.today;
-                    else if (datestr == tomorrowdatestr) datestr = t.tomorrow;
-
-                    table += (dayofweek==0||dayofweek==6) ? "<tr class='forecast-weekend-row'>" : "<tr>";
-                    table += "<td><nobr>" + datestr + "</nobr></td>";
-
-                    if (jsonObj.list[i].weather[0].icon.endsWith("d"))
-                        table += "<td><img src='WeatherIcon" + jsonObj.list[i].weather[0].icon + ".png' height='80'></td>";
-                    else
-                        table += "<td><img src='WeatherIcon" + jsonObj.list[i].weather[0].icon.slice(0,-1) + "d.png' height='80'></td>";
-
-                    var temp = ((jsonObj.list[i].temp.max * 9/5) + 32).toFixed(0) + "/" +
-                               ((jsonObj.list[i].temp.min * 9/5) + 32).toFixed(0) + " &#8457;";
-                    table += "<td><nobr>" + temp + "</nobr></td>";
-
-                    var windspeed = "-";
-                    var windspeedval = jsonObj.list[i].speed;
-                    if (windspeedval != "-") {
-                        switch(windSpeedUnit) {
-                            case "mph": windspeed = (windspeedval * 2.23694).toFixed(1) + " mph"; break;
-                            case "m/s": windspeed = windspeedval.toFixed(1) + " <sup>m</sup><span class='bslash'>&frasl;</span><sub>s</sub>"; break;
-                            case "kn":  windspeed = (windspeedval * 1.94384).toFixed(1) + " kn"; break;
-                        }
-                    }
-
-                    if (jsonObj.list[i].deg != "-") {
-                        var winddeg   = jsonObj.list[i].deg;
-                        var windabbr  = ['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSW','SW','WSW','W','WNW','NW','NNW'];
-                        var windindex = Math.round(((winddeg %= 360) < 0 ? winddeg + 360 : winddeg) / 22.5) % 16;
-                        windspeed += " <img src='wind" + windabbr[windindex] + ".png' height='32'> <nobr>" + windabbr[windindex] + "</nobr>";
-                    }
-                    table += "<td>" + windspeed + "</td>";
-
-                    var rain = "-";
-                    if (jsonObj.list[i].rain != undefined)
-                        rain = jsonObj.list[i].rain.toFixed(1) + " mm";
-                    table += rain != "-"
-                        ? "<td><img src='raindrop.png' height='40' style='vertical-align:middle'> " + rain + "</td>"
-                        : "<td>" + rain + "</td>";
-
-                    table += "</tr>\n";
-                }
-                document.getElementById("forecast-table").innerHTML = table;
-                document.getElementById("item_forecast").hidden = false;
-            }
-        };
-        xhttp.open("GET", "https://api.openweathermap.org/data/2.5/forecast/daily?lat=" + latitude +
-            "&lon=" + longitude + "&cnt=" + numdays + "&appid=" + apikey + "&units=metric", true);
-        xhttp.send();
-    }
-
-    function getForecastData() {
-        var xhttp = new XMLHttpRequest();
-        xhttp.onreadystatechange = function() {
-            if (this.readyState == 4 && this.status == 200) {
-                var jsonObj = JSON.parse(this.responseText);
-                if (jsonObj.latitude == undefined || jsonObj.latitude == 0)
-                    document.getElementById("item_forecast").hidden = true;
-                else
-                    getForecastDataWithConfiguration(jsonObj.latitude, jsonObj.longitude, jsonObj.numdays, jsonObj.apikey);
-            }
-        };
-        xhttp.open("GET", "forecast-configuration.json", true);
-        xhttp.send();
-    }
+    let windSpeedUnit = "mph";
 
     function setIfChanged(id, value) {
         if (_cache[id] === value) return;
@@ -437,10 +321,7 @@
                     if (jsonObj.aggregated.mintemperature != "-" && jsonObj.aggregated.maxtemperature != "-") {
                         var minF = (parseFloat(jsonObj.aggregated.mintemperature) * 9/5 + 32).toFixed(0);
                         var maxF = (parseFloat(jsonObj.aggregated.maxtemperature) * 9/5 + 32).toFixed(0);
-                        if (coloredtemperatures)
-                            temperature += " (<span style='color:#5b7c99'>&mapstodown;" + minF + "</span> <span style='color:#b85042'>&mapstoup;" + maxF + "</span>)";
-                        else
-                            temperature += " (&mapstodown;" + minF + " &mapstoup;" + maxF + ")";
+                        temperature += " (<span style='color:#5b7c99'>&mapstodown;" + minF + "</span> <span style='color:#b85042'>&mapstoup;" + maxF + "</span>)";
                     }
                 }
                 setIfChanged("temperature", temperature);
@@ -546,13 +427,10 @@
             case "kn":  windSpeedUnit = "mph"; break;
         }
         getWeatherData();
-        getForecastData();
     }
 
-    setInterval(function() { getWeatherData();   }, 20*1000);
-    setInterval(function() { getForecastData(); }, 15*60*1000);
+    setInterval(function() { getWeatherData(); }, 20*1000);
     getWeatherData();
-    getForecastData();
 </script>
 
 </body>
