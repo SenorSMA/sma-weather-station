@@ -193,7 +193,7 @@
                     }
                 }
 
-                var table = "<tr class='forecast-header-row'><td></td><td></td><td>Temp</td><td>Wind</td><td>Rain</td></tr>\n";
+                var table = "<tr class='forecast-header-row'><td></td><td></td><td>Temp <span style='font-size:0.8em'>&#8457;</span></td><td>Wind <span style='font-size:0.8em'>mph</span></td><td>Rain <span style='font-size:0.8em'>mm</span></td></tr>\n";
                 for (let k = 0; k < dayOrder.length; k++) {
                     var d = days[dayOrder[k]];
                     var date      = new Date(d.dt * 1000);
@@ -220,21 +220,21 @@
                         "<span style='color:#b85042'>" + hiF + "</span>" +
                         " <span class='bslash'>/</span> " +
                         "<span style='color:#5b7c99'>" + loF + "</span>" +
-                        " <span style='font-size:0.8em'>&#8457;</span></nobr></td>";
+                        "</nobr></td>";
 
                     // Wind speed
                     var windspeed = "-";
                     if (d.windSpeed != null) {
                         switch(windSpeedUnit) {
-                            case "mph": windspeed = (d.windSpeed * 2.23694).toFixed(1) + " <span style='font-size:0.8em'>mph</span>"; break;
-                            case "m/s": windspeed = d.windSpeed.toFixed(1) + " <sup>m</sup><span class='bslash'>&frasl;</span><sub>s</sub>"; break;
-                            case "kn":  windspeed = (d.windSpeed * 1.94384).toFixed(1) + " <span style='font-size:0.8em'>kn</span>"; break;
+                            case "mph": windspeed = (d.windSpeed * 2.23694).toFixed(1); break;
+                            case "m/s": windspeed = d.windSpeed.toFixed(1); break;
+                            case "kn":  windspeed = (d.windSpeed * 1.94384).toFixed(1); break;
                         }
                     }
                     table += "<td>" + windspeed + "</td>";
 
                     // Rain
-                    var rain = d.rain > 0 ? d.rain.toFixed(1) + " <span style='font-size:0.8em'>mm</span>" : "-";
+                    var rain = d.rain > 0 ? d.rain.toFixed(1) : "-";
                     table += "<td>" + rain + "</td>";
 
                     table += "</tr>\n";
