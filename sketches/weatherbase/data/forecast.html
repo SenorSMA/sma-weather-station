@@ -83,6 +83,7 @@
         .forecast-table { border-spacing: 0; width: 90%; margin: 0 auto; }
         .forecast-table td        { font-size: 32pt; font-weight: normal; padding: 10px; background-color: transparent; font-family: 'Bodoni MT', Didot, 'Book Antiqua', Georgia, serif; }
         .forecast-weekend-row td  { font-size: 32pt; font-weight: normal; padding: 10px; background-color: transparent; font-family: 'Bodoni MT', Didot, 'Book Antiqua', Georgia, serif; }
+        .forecast-header-row td   { font-size: 18pt; font-weight: bold; text-align: center; padding: 4px 10px 0 10px; background-color: transparent; font-family: 'Bodoni MT', Didot, 'Book Antiqua', Georgia, serif; border-bottom: 1px solid rgba(61,54,48,0.3); }
 
         .bslash { -webkit-text-stroke: 0.7px currentColor; font-weight: bold; }
 
@@ -97,6 +98,7 @@
             .forecast-table { width: 100%; }
             .forecast-table td       { font-size: 16pt; font-weight: bold; padding: 6px 4px; background-color: transparent; font-family: 'Bodoni MT', Didot, 'Book Antiqua', Georgia, serif; }
             .forecast-weekend-row td { font-size: 16pt; font-weight: bold; padding: 6px 4px; background-color: transparent; font-family: 'Bodoni MT', Didot, 'Book Antiqua', Georgia, serif; }
+            .forecast-header-row td  { font-size: 11pt; padding: 2px 4px 0 4px; }
             #forecast-header { font-size: 62% !important; }
         }
     </style>
@@ -190,7 +192,7 @@
                     }
                 }
 
-                var table = "";
+                var table = "<tr class='forecast-header-row'><td></td><td></td><td>Temp</td><td>Wind</td><td>Rain</td></tr>\n";
                 for (let k = 0; k < dayOrder.length; k++) {
                     var d = days[dayOrder[k]];
                     var date      = new Date(d.dt * 1000);
@@ -217,21 +219,21 @@
                         "<span style='color:#b85042'>" + hiF + "</span>" +
                         " <span class='bslash'>/</span> " +
                         "<span style='color:#5b7c99'>" + loF + "</span>" +
-                        " &#8457;</nobr></td>";
+                        " <span style='font-size:0.8em'>&#8457;</span></nobr></td>";
 
                     // Wind speed
                     var windspeed = "-";
                     if (d.windSpeed != null) {
                         switch(windSpeedUnit) {
-                            case "mph": windspeed = (d.windSpeed * 2.23694).toFixed(1) + " mph"; break;
+                            case "mph": windspeed = (d.windSpeed * 2.23694).toFixed(1) + " <span style='font-size:0.8em'>mph</span>"; break;
                             case "m/s": windspeed = d.windSpeed.toFixed(1) + " <sup>m</sup><span class='bslash'>&frasl;</span><sub>s</sub>"; break;
-                            case "kn":  windspeed = (d.windSpeed * 1.94384).toFixed(1) + " kn"; break;
+                            case "kn":  windspeed = (d.windSpeed * 1.94384).toFixed(1) + " <span style='font-size:0.8em'>kn</span>"; break;
                         }
                     }
                     table += "<td>" + windspeed + "</td>";
 
                     // Rain
-                    var rain = d.rain > 0 ? d.rain.toFixed(1) + " mm" : "-";
+                    var rain = d.rain > 0 ? d.rain.toFixed(1) + " <span style='font-size:0.8em'>mm</span>" : "-";
                     table += rain != "-"
                         ? "<td><img src='raindrop.png' height='40' style='vertical-align:middle'> " + rain + "</td>"
                         : "<td>" + rain + "</td>";
