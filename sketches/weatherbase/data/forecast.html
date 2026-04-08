@@ -217,12 +217,7 @@
         document.getElementById("lbl-datafrom").innerText    = t.dataFrom;
         document.getElementById("footer-text").innerHTML     = t.footer;
         document.getElementById("lang-toggle").innerText     = t.toggleButton;
-        // Auto-switch wind unit with language
-        if (currentLang === "es") windSpeedUnit = "km/h";
-        else                      windSpeedUnit = "mph";
         if (cachedDays) buildTable();
-        // Save to localStorage for cross-page sync
-        try { localStorage.setItem("smaLang", currentLang); } catch(e) {}
     }
 
     function toggleLanguage() {
@@ -230,19 +225,11 @@
         applyLanguage();
     }
 
-    // Load saved language and listen for cross-page changes
-    try {
-        var savedLang = localStorage.getItem("smaLang");
-        if (savedLang) currentLang = savedLang;
-    } catch(e) {}
-
     function buildTable() {
         const t = translations[currentLang];
-        var tempUnit = currentLang === "es" ? "&#8451;" : "&#8457;";
-        var windUnit = currentLang === "es" ? "km/h"    : "mph";
         var table = "<tr class='forecast-header-row'><td></td><td></td>" +
-            "<td>" + t.tempCol + " <span style='font-size:0.8em'>" + tempUnit + "</span></td>" +
-            "<td>" + t.windCol + " <span style='font-size:0.8em'>" + windUnit + "</span></td>" +
+            "<td>" + t.tempCol + " <span style='font-size:0.8em'>&#8457;</span></td>" +
+            "<td>" + t.windCol + " <span style='font-size:0.8em'>mph</span></td>" +
             "<td>" + t.rainCol + " <span style='font-size:0.8em'>mm</span></td></tr>\n";
 
         for (let k = 0; k < cachedOrder.length; k++) {
@@ -264,14 +251,8 @@
             if (!icon.endsWith("d")) icon = icon.slice(0, -1) + "d";
             table += "<td><img src='WeatherIcon" + icon + ".png' height='64'></td>";
 
-            var hi, lo;
-            if (currentLang === "es") {
-                hi = d.tempMax.toFixed(0);
-                lo = d.tempMin.toFixed(0);
-            } else {
-                hi = ((d.tempMax * 9/5) + 32).toFixed(0);
-                lo = ((d.tempMin * 9/5) + 32).toFixed(0);
-            }
+            var hi = ((d.tempMax * 9/5) + 32).toFixed(0);
+            var lo = ((d.tempMin * 9/5) + 32).toFixed(0);
             table += "<td><nobr>" +
                 "<span style='color:#b85042'>" + hi + "</span>" +
                 " <span class='bslash'>/</span> " +
@@ -281,10 +262,9 @@
             var windspeed = "-";
             if (d.windSpeed != null) {
                 switch(windSpeedUnit) {
-                    case "mph":  windspeed = (d.windSpeed * 2.23694).toFixed(1); break;
-                    case "m/s":  windspeed = d.windSpeed.toFixed(1); break;
-                    case "kn":   windspeed = (d.windSpeed * 1.94384).toFixed(1); break;
-                    case "km/h": windspeed = (d.windSpeed * 3.6).toFixed(1); break;
+                    case "mph": windspeed = (d.windSpeed * 2.23694).toFixed(1); break;
+                    case "m/s": windspeed = d.windSpeed.toFixed(1); break;
+                    case "kn":  windspeed = (d.windSpeed * 1.94384).toFixed(1); break;
                 }
             }
             table += "<td>" + windspeed + "</td>";
@@ -351,13 +331,6 @@
             "&lon=" + LONGITUDE + "&cnt=40&appid=" + APIKEY + "&units=metric", true);
         xhttp.send();
     }
-
-    window.addEventListener('storage', function(e) {
-        if (e.key === "smaLang" && e.newValue && e.newValue !== currentLang) {
-            currentLang = e.newValue;
-            applyLanguage();
-        }
-    });
 
     loadForecast();
 </script>
