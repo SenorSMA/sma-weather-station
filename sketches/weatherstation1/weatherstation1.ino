@@ -204,53 +204,50 @@ static void propagateWindDirection(WeatherReport &report) {
 #endif // TESTING
 #endif // DEBUG
 
-    //  AS5600 is wired to the PWM output pin.
-    //  Read the duty cycle using pulseIn() — the AS5600 PWM output encodes angle
-    //  as a duty cycle: 0° → ~0%, 360° → ~100% (period ~1087µs at 920Hz).
-    //  pulseIn timeout is 5× the expected period to handle slow/stopped vanes.
-    unsigned long highUs = pulseIn(WIND_VANE_PIN, HIGH, 5500);
-    unsigned long lowUs  = pulseIn(WIND_VANE_PIN, LOW,  5500);
+    int rawValue = analogRead(WIND_VANE_PIN);
 
 #if TESTING&&DEBUG
-    Serial.printf("PWM high=%luµs low=%luµs\n", highUs, lowUs);
+    Serial.printf("raw A2D value is %d\n", rawValue);
 #endif // TESTING&&DEBUG
-
-    unsigned long periodUs = highUs + lowUs;
-    if (periodUs > 0) {
-
-      //  convert duty cycle to angle 0–360°
-      float angle = 360.0f * (float)highUs / (float)periodUs;
-
-      //  NORTH_OFFSET_DEG: the angle the AS5600 reports when the vane points North.
-      //  Set TESTING 1 and rotate the vane to North to find this value, then adjust.
-      #define NORTH_OFFSET_DEG 0.0f
-
-      //  rotate so that North = 0°, then wrap into 0–360
-      angle = angle - NORTH_OFFSET_DEG;
-      if (angle <    0.0f) angle += 360.0f;
-      if (angle >= 360.0f) angle -= 360.0f;
-
-      //  map to nearest of 16 compass points (each covers 22.5°)
-      int best_i = (int)((angle + 11.25f) / 22.5f) % 16;
-
-      static const char *directions[] =
-        {
-          "N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE",
-          "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW"
-        };
-
-#if TESTING&&DEBUG
-      Serial.printf("angle=%.1f° (offset %.1f°) direction=%s\n",
-                    angle, NORTH_OFFSET_DEG, directions[best_i]);
-#endif // TESTING&&DEBUG
-
-      report.setWindDirection(directions[best_i]);
+    //  while the AS5600 allows read outs in degrees using the I2C or
+    //  PWM interfaces, we use the analog plus A2D interface. It is
+    //  the default set for the chip and allows us to use the bigger
+    //  soldering points; the mapping is good enough to derive one of
+    //  the 16 directions
+  
+    //  map 22.5 degree segments starting with "N" to raw values
+    //  this mapping works around the non-linearity of A2D conversion
+    //  in addition, it minimized the "blind" spot between 4095 / 0
+    //  the best way possible
+    static int raw4direction[] = 
+      {
+        4095, 0, 197, 460, 704, 951, 1223, 1484,
+        1743, 1936, 2186, 2410, 2732, 3020, 3363, 3744 
+      };
+  
+    //  find best match according to raw value
+    int best_i = 0;
+    int best_diff = 4096;
+    for (int i = 0; i<16; i++) {
+      int diff = 2048 - abs(abs(raw4direction[i]-rawValue)%4096 - 2048);
+      if (diff<best_diff) {
+        best_diff = diff;
+        best_i = i;
+      }
     }
+
+    //  set result
+    static const char *directions[] = 
+      {
+        "N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE",
+        "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW" 
+      };
+
 #if TESTING&&DEBUG
-    else {
-      Serial.println("PWM read timed out — check AS5600 wiring/power");
-    }
+    Serial.printf("direction measured: %s\n", directions[best_i]);
 #endif // TESTING&&DEBUG
+      
+    report.setWindDirection(directions[best_i]);  
   }
 }
 #endif // USE_WIND_AS5600
