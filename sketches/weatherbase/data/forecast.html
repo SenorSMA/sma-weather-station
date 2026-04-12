@@ -161,7 +161,6 @@
     const LONGITUDE  = -100.74;
     const APIKEY     = "209bf19664d8744294dd1bcd791208c9";
 
-    let windSpeedUnit = "mph";
     let currentLang   = "en";
     let cachedDays    = null;
     let cachedOrder   = null;
@@ -196,7 +195,7 @@
         },
         es: {
             titleMain:     "Clima SMA",
-            titleSub:      "México Central 6,614 pies",
+            titleSub:      "México Central 2,014 m",
             forecastHeader:"Pronóstico 5 Días",
             tempCol:       "Temp",
             windCol:       "Viento",
@@ -226,10 +225,14 @@
 
     function buildTable() {
         const t = translations[currentLang];
+        var isMetric = currentLang === "es";
+        var tempUnit = isMetric ? "°C" : "°F";
+        var windUnit = isMetric ? "km/h" : "mph";
+
         var table = "<tr class='forecast-header-row'><td></td><td></td>" +
-            "<td>" + t.tempCol + " <span style='font-size:0.8em'>&#8457;</span></td>" +
-            "<td>" + t.windCol + " <span style='font-size:0.8em'>mph</span></td>" +
-            "<td>" + t.rainCol + " <span style='font-size:0.8em'>mm</span></td></tr>\n";
+            "<td>" + t.tempCol + " <span style='font-size:1.0em'>(" + tempUnit + ")</span></td>" +
+            "<td>" + t.windCol + " <span style='font-size:1.0em'>(" + windUnit + ")</span></td>" +
+            "<td>" + t.rainCol + " <span style='font-size:1.0em'>(mm)</span></td></tr>\n";
 
         for (let k = 0; k < cachedOrder.length; k++) {
             var d = cachedDays[cachedOrder[k]];
@@ -250,8 +253,14 @@
             if (!icon.endsWith("d")) icon = icon.slice(0, -1) + "d";
             table += "<td><img src='WeatherIcon" + icon + ".png' height='64'></td>";
 
-            var hi = ((d.tempMax * 9/5) + 32).toFixed(0);
-            var lo = ((d.tempMin * 9/5) + 32).toFixed(0);
+            var hi, lo;
+            if (isMetric) {
+                hi = d.tempMax.toFixed(0);
+                lo = d.tempMin.toFixed(0);
+            } else {
+                hi = ((d.tempMax * 9/5) + 32).toFixed(0);
+                lo = ((d.tempMin * 9/5) + 32).toFixed(0);
+            }
             table += "<td><nobr>" +
                 "<span style='color:#b85042'>" + hi + "</span>" +
                 " <span class='bslash'>/</span> " +
@@ -260,11 +269,9 @@
 
             var windspeed = "-";
             if (d.windSpeed != null) {
-                switch(windSpeedUnit) {
-                    case "mph": windspeed = (d.windSpeed * 2.23694).toFixed(1); break;
-                    case "m/s": windspeed = d.windSpeed.toFixed(1); break;
-                    case "kn":  windspeed = (d.windSpeed * 1.94384).toFixed(1); break;
-                }
+                windspeed = isMetric
+                    ? (d.windSpeed * 3.6).toFixed(1)
+                    : (d.windSpeed * 2.23694).toFixed(1);
             }
             table += "<td>" + windspeed + "</td>";
 
