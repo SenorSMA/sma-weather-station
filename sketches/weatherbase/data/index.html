@@ -178,6 +178,7 @@
     /* ── LANGUAGE SYSTEM ── */
     let currentLang = "en";
     let lastUpdatedStr = "-";
+    let lastJsonObj = null;
     const _cache = {};
 
     function formatDateForLang(dateStr, lang) {
@@ -205,11 +206,12 @@
             sun:          "Sun",
             sunrise:      "Sunrise&thinsp;<span class='bslash'>/</span>&thinsp;Sunset",
             footer:       "© 2026 SMA Weather",
-            toggleButton: "🇲🇽"
+            toggleButton: "🇲🇽",
+            gusts:        "gusts"
         },
         es: {
             titleMain:    "Clima SMA",
-            titleSub:     "México Central 6,614 pies",
+            titleSub:     "México Central 2,014 m",
             current:      "Condiciones Actuales",
             temp:         "Temperatura",
             humidity:     "Humedad",
@@ -220,9 +222,17 @@
             sun:          "Sol",
             sunrise:      "Amane&thinsp;<span class='bslash'>/</span>&thinsp;Atarde",
             footer:       "© 2026 Clima SMA",
-            toggleButton: "🇺🇸"
+            toggleButton: "🇺🇸",
+            gusts:        "ráfagas"
         }
     };
+
+    function setIfChanged(id, value) {
+        if (_cache[id] === value) return;
+        _cache[id] = value;
+        var el = document.getElementById(id);
+        if (el) el.innerHTML = value;
+    }
 
     function applyLanguage() {
         const t = translations[currentLang];
@@ -240,6 +250,9 @@
         document.getElementById("footer-text").innerHTML    = t.footer;
         document.getElementById("lang-toggle").innerText    = t.toggleButton;
         setIfChanged("updated", formatDateForLang(lastUpdatedStr, currentLang));
+        // Clear unit-dependent caches so switching language forces a re-render
+        ["temperature", "pressure", "rain", "wind"].forEach(id => delete _cache[id]);
+        if (lastJsonObj) renderWeatherValues(lastJsonObj);
     }
 
     function toggleLanguage() {
@@ -262,7 +275,7 @@
         var ar = Math.round(len * 0.35);
         var ax = bx + Math.round(ar * Math.cos(rad));
         var ay = by - Math.round(ar * Math.sin(rad));
-        var sweep = deg >= 0 ? 1 : 0;   // arc above baseline for positive, below for negative
+        var sweep = deg >= 0 ? 1 : 0;
         return '<svg width="'+w+'" height="'+h+'" viewBox="0 0 '+w+' '+h+'" overflow="visible" style="width:'+w+'px;height:'+h+'px;vertical-align:text-top;position:relative;top:-5px;left:4px;flex-shrink:0">' +
                '<line x1="'+bx+'" y1="'+by+'" x2="'+(bx+len)+'" y2="'+by+'" stroke="currentColor" stroke-width="2"/>' +
                '<line x1="'+bx+'" y1="'+by+'" x2="'+x2+'" y2="'+y2+'" stroke="currentColor" stroke-width="2"/>' +
@@ -288,18 +301,144 @@
         const maxMps = Math.max(...gustHistory.map(g => g.v));
         switch(unit) {
             case "mph": return (maxMps * 2.23694).toFixed(1);
-            case "m/s": return maxMps.toFixed(1);
-            case "kn":  return (maxMps * 1.94384).toFixed(1);
+            case "kmh": return (maxMps * 3.6).toFixed(1);
         }
     }
 
-    let windSpeedUnit = "mph";
+    /* ── RENDER WEATHER VALUES (unit system driven by currentLang) ── */
+    function renderWeatherValues(jsonObj) {
+        var isPhone  = window.innerWidth <= 600;
+        var isMetric = currentLang === "es";
+        var t        = translations[currentLang];
 
-    function setIfChanged(id, value) {
-        if (_cache[id] === value) return;
-        _cache[id] = value;
-        var el = document.getElementById(id);
-        if (el) el.innerHTML = value;
+        // Temperature
+        var temperature = "-";
+        if (jsonObj.weather.temperature != "-") {
+            if (isMetric) {
+                temperature = parseFloat(jsonObj.weather.temperature).toFixed(1) + " °C";
+                if (jsonObj.aggregated.mintemperature != "-" && jsonObj.aggregated.maxtemperature != "-") {
+                    var minC = parseFloat(jsonObj.aggregated.mintemperature).toFixed(0);
+                    var maxC = parseFloat(jsonObj.aggregated.maxtemperature).toFixed(0);
+                    temperature += " (<span style='color:#5b7c99'>&mapstodown;" + minC + "</span> <span style='color:#b85042'>&mapstoup;" + maxC + "</span>)";
+                }
+            } else {
+                var tempF = (parseFloat(jsonObj.weather.temperature) * 9/5 + 32).toFixed(1);
+                temperature = tempF + " &#8457;";
+                if (jsonObj.aggregated.mintemperature != "-" && jsonObj.aggregated.maxtemperature != "-") {
+                    var minF = (parseFloat(jsonObj.aggregated.mintemperature) * 9/5 + 32).toFixed(0);
+                    var maxF = (parseFloat(jsonObj.aggregated.maxtemperature) * 9/5 + 32).toFixed(0);
+                    temperature += " (<span style='color:#5b7c99'>&mapstodown;" + minF + "</span> <span style='color:#b85042'>&mapstoup;" + maxF + "</span>)";
+                }
+            }
+        }
+        setIfChanged("temperature", temperature);
+
+        setIfChanged("humidity",
+            jsonObj.weather.humidity == "-" ? "-" : jsonObj.weather.humidity + " %rH");
+
+        // Pressure
+        var pressure = "-";
+        if (jsonObj.weather.pressure != "-") {
+            if (isMetric) {
+                pressure = parseFloat(jsonObj.weather.pressure).toFixed(0) + " hPa";
+            } else {
+                pressure = (parseFloat(jsonObj.weather.pressure) * 0.02953).toFixed(2) + " inHg";
+            }
+            if (jsonObj.aggregated.barotrend != "-") {
+                if (jsonObj.aggregated.barotrend > 1)       pressure += " <span style='color:#b85042'>&mapstoup;</span>";
+                else if (jsonObj.aggregated.barotrend < -1)  pressure += " <span style='color:#5b7c99'>&mapstodown;</span>";
+            }
+        }
+        setIfChanged("pressure", pressure);
+
+        // Rain
+        var rain = "-";
+        if (jsonObj.aggregated.rainhour != "-") {
+            if (isMetric) {
+                rain = jsonObj.aggregated.rainhour + " <sup>mm</sup><span class='bslash'>&frasl;</span><sub>h</sub>";
+                if (jsonObj.aggregated.rainday != "-")
+                    rain += ", " + jsonObj.aggregated.rainday + " <sup>mm</sup><span class='bslash'>&frasl;</span><sub>d</sub>";
+            } else {
+                var rainH = (parseFloat(jsonObj.aggregated.rainhour) * 0.0393701).toFixed(2);
+                rain = rainH + " <sup>in</sup><span class='bslash'>&frasl;</span><sub>h</sub>";
+                if (jsonObj.aggregated.rainday != "-") {
+                    var rainD = (parseFloat(jsonObj.aggregated.rainday) * 0.0393701).toFixed(2);
+                    rain += ", " + rainD + " <sup>in</sup><span class='bslash'>&frasl;</span><sub>d</sub>";
+                }
+            }
+        }
+        setIfChanged("rain", rain);
+
+        // Wind
+        var wind = "-";
+        if (jsonObj.aggregated.windmps == "-") {
+            wind = jsonObj.weather.winddirection != "-" ? jsonObj.weather.winddirection : "-";
+        } else {
+            var windVal, windUnit;
+            if (isMetric) {
+                windVal  = (parseFloat(jsonObj.aggregated.windmps) * 3.6).toFixed(1);
+                windUnit = "km/h";
+            } else {
+                windVal  = jsonObj.aggregated.windmph != "-" ? jsonObj.aggregated.windmph : (parseFloat(jsonObj.aggregated.windmps) * 2.23694).toFixed(1);
+                windUnit = "mph";
+            }
+            wind = windVal + " " + windUnit;
+
+            recordGust(jsonObj.aggregated.gustsmps);
+            var gustUnit = isMetric ? "kmh" : "mph";
+            var maxG = maxGust60(gustUnit);
+            if (!isPhone && maxG != "-" && maxG != windVal)
+                wind += " (" + t.gusts + " " + maxG + ")";
+            if (jsonObj.weather.winddirection != "-") {
+                var arrowH = isPhone ? 22 : 32;
+                wind += " <img src='wind" + jsonObj.weather.winddirection + ".png' height='" + arrowH + "' style='vertical-align:middle;position:relative;top:-1px'>&nbsp;";
+                wind += jsonObj.weather.winddirection;
+            }
+            if (isPhone && maxG != "-" && maxG != windVal)
+                wind += " ↑" + maxG;
+        }
+        setIfChanged("wind", wind);
+
+        // Sun
+        var sun = "-";
+        if (jsonObj.sun.azimuth != "-" && jsonObj.sun.inclination != "-") {
+            var azH    = isPhone ? 32 : 40;
+            var incDeg = parseFloat(jsonObj.sun.inclination);
+            var azDeg  = parseFloat(jsonObj.sun.azimuth);
+            sun = inclinationSVG(incDeg, azH) +
+                  "<span style='position:relative;left:-4px'>" + jsonObj.sun.inclination + "&deg;</span> " +
+                  "<img src='azimuth.png' height='" + azH + "' style='vertical-align:middle;transform:rotate(" + azDeg + "deg);display:inline-block'> " +
+                  jsonObj.sun.azimuth + "&deg;";
+        }
+        setIfChanged("sun", sun);
+
+        // Sunrise / Sunset
+        var sunrisesunset = "-";
+        if (jsonObj.sun.sunrise != undefined && jsonObj.sun.sunrise != "-" &&
+            jsonObj.sun.sunset  != undefined && jsonObj.sun.sunset  != "-") {
+            var sr = jsonObj.sun.sunrise;
+            var ss = jsonObj.sun.sunset;
+            if (isPhone) {
+                sr = sr.replace(/\s*(AM|PM)/i, "");
+                ss = ss.replace(/\s*(AM|PM)/i, "");
+            }
+            sunrisesunset = sr + "&thinsp;<span class='bslash'>/</span>&thinsp;" + ss;
+        }
+        setIfChanged("sunrisesunset", sunrisesunset);
+
+        setIfChanged("batterypercentage",
+            jsonObj.weather.batterypercentage == "-" ? "-" : jsonObj.weather.batterypercentage + " %");
+
+        lastUpdatedStr = jsonObj["updated-de"];
+        setIfChanged("updated", formatDateForLang(lastUpdatedStr, currentLang));
+
+        if (jsonObj["updated-de"] != "-") {
+            setIfChanged("offline", jsonObj["offline"]
+                ? "<img src='RedDot12.png' height='12' style='vertical-align:middle'>"
+                : "<img src='GreenDot12.png' height='12' style='vertical-align:middle'>");
+        } else {
+            setIfChanged("offline", "");
+        }
     }
 
     function getWeatherData() {
@@ -308,127 +447,19 @@
             if (this.readyState == 4 && this.status == 200) {
                 var response = JSON.parse(this.responseText);
                 var jsonObj  = response.record || response;
+                lastJsonObj  = jsonObj;
 
                 if (jsonObj.message != undefined && jsonObj.message != "")
                     setIfChanged("message", jsonObj.message);
                 else
                     document.getElementById("message").hidden = true;
 
-                var isPhone = window.innerWidth <= 600;
-
-                var temperature = "-";
-                if (jsonObj.weather.temperature != "-") {
-                    var tempF = (parseFloat(jsonObj.weather.temperature) * 9/5 + 32).toFixed(1);
-                    temperature = tempF + " &#8457;";
-                    if (jsonObj.aggregated.mintemperature != "-" && jsonObj.aggregated.maxtemperature != "-") {
-                        var minF = (parseFloat(jsonObj.aggregated.mintemperature) * 9/5 + 32).toFixed(0);
-                        var maxF = (parseFloat(jsonObj.aggregated.maxtemperature) * 9/5 + 32).toFixed(0);
-                        temperature += " (<span style='color:#5b7c99'>&mapstodown;" + minF + "</span> <span style='color:#b85042'>&mapstoup;" + maxF + "</span>)";
-                    }
-                }
-                setIfChanged("temperature", temperature);
-
-                setIfChanged("humidity",
-                    jsonObj.weather.humidity == "-" ? "-" : jsonObj.weather.humidity + " %rH");
-
-                var pressure = "-";
-                if (jsonObj.weather.pressure != "-") {
-                    pressure = (parseFloat(jsonObj.weather.pressure) * 0.02953).toFixed(2) + " inHg";
-                    if (jsonObj.aggregated.barotrend != "-") {
-                        if (jsonObj.aggregated.barotrend > 1)       pressure += " <span style='color:#b85042'>&mapstoup;</span>";
-                        else if (jsonObj.aggregated.barotrend < -1)  pressure += " <span style='color:#5b7c99'>&mapstodown;</span>";
-                    }
-                }
-                setIfChanged("pressure", pressure);
-
-                var rain = "-";
-                if (jsonObj.aggregated.rainhour != "-") {
-                    rain = jsonObj.aggregated.rainhour + " <sup>mm</sup><span class='bslash'>&frasl;</span><sub>h</sub>";
-                    if (jsonObj.aggregated.rainday != "-")
-                        rain += ", " + jsonObj.aggregated.rainday + " <sup>mm</sup><span class='bslash'>&frasl;</span><sub>d</sub>";
-                }
-                setIfChanged("rain", rain);
-
-                var wind = "-";
-                if (jsonObj.aggregated.windmps == "-") {
-                    wind = jsonObj.weather.winddirection != "-" ? jsonObj.weather.winddirection : "-";
-                } else {
-                    switch(windSpeedUnit) {
-                        case "mph": wind = jsonObj.aggregated.windmph != "-" ? jsonObj.aggregated.windmph : (parseFloat(jsonObj.aggregated.windmps) * 2.23694).toFixed(1); break;
-                        case "m/s": wind = jsonObj.aggregated.windmps; break;
-                        case "kn":  wind = jsonObj.aggregated.windknots; break;
-                    }
-                    var htmlWindSpeedUnit = windSpeedUnit;
-                    if (htmlWindSpeedUnit == "m/s") htmlWindSpeedUnit = "<sup>m</sup><span class='bslash'>&frasl;</span><sub>s</sub>";
-                    wind += " <button style='background-color:#5b7c99;color:white;font-size:11pt;padding:0;border-radius:50%;width:34px;height:34px;border:none;display:inline-flex;align-items:center;justify-content:center;line-height:1;position:relative;top:-3px;' type='button' onclick='changeWindSpeedUnit()'>" + htmlWindSpeedUnit + "</button>";
-
-                    recordGust(jsonObj.aggregated.gustsmps);
-                    var maxG = maxGust60(windSpeedUnit);
-                    if (!isPhone && maxG != "-" && maxG != wind.split(" ")[0])
-                        wind += " (gusts " + maxG + ")";
-                    if (jsonObj.weather.winddirection != "-") {
-                        var arrowH = isPhone ? 22 : 32;
-                        wind += " <img src='wind" + jsonObj.weather.winddirection + ".png' height='" + arrowH + "' style='vertical-align:middle;position:relative;top:-1px'>&nbsp;";
-                        wind += jsonObj.weather.winddirection;
-                    }
-                    if (isPhone && maxG != "-" && maxG != wind.split(" ")[0])
-                        wind += " ↑" + maxG;
-                }
-                setIfChanged("wind", wind);
-
-                var sun = "-";
-                if (jsonObj.sun.azimuth != "-" && jsonObj.sun.inclination != "-") {
-                    var azH  = isPhone ? 32 : 40;
-                    var incH = azH;
-                    var incDeg = parseFloat(jsonObj.sun.inclination);
-                    var azDeg  = parseFloat(jsonObj.sun.azimuth);
-                    sun = inclinationSVG(incDeg, incH) +
-                          "<span style='position:relative;left:-4px'>" + jsonObj.sun.inclination + "&deg;</span> " +
-                          "<img src='azimuth.png' height='" + azH + "' style='vertical-align:middle;transform:rotate(" + azDeg + "deg);display:inline-block'> " +
-                          jsonObj.sun.azimuth + "&deg;";
-                }
-                setIfChanged("sun", sun);
-
-                var sunrisesunset = "-";
-                if (jsonObj.sun.sunrise != undefined && jsonObj.sun.sunrise != "-" &&
-                    jsonObj.sun.sunset  != undefined && jsonObj.sun.sunset  != "-") {
-                    var sr = jsonObj.sun.sunrise;
-                    var ss = jsonObj.sun.sunset;
-                    if (window.innerWidth <= 600) {
-                        sr = sr.replace(/\s*(AM|PM)/i, "");
-                        ss = ss.replace(/\s*(AM|PM)/i, "");
-                    }
-                    sunrisesunset = sr + "&thinsp;<span class='bslash'>/</span>&thinsp;" + ss;
-                }
-                setIfChanged("sunrisesunset", sunrisesunset);
-
-                setIfChanged("batterypercentage",
-                    jsonObj.weather.batterypercentage == "-" ? "-" : jsonObj.weather.batterypercentage + " %");
-
-                lastUpdatedStr = jsonObj["updated-de"];
-                setIfChanged("updated", formatDateForLang(lastUpdatedStr, currentLang));
-
-                if (jsonObj["updated-de"] != "-") {
-                    setIfChanged("offline", jsonObj["offline"]
-                        ? "<img src='RedDot12.png' height='12' style='vertical-align:middle'>"
-                        : "<img src='GreenDot12.png' height='12' style='vertical-align:middle'>");
-                } else {
-                    setIfChanged("offline", "");
-                }
+                renderWeatherValues(jsonObj);
             }
         };
         xhttp.open("GET", "https://api.jsonbin.io/v3/b/696e511cae596e708fe6da08/latest", true);
         xhttp.setRequestHeader("X-Master-Key", "$2a$10$dCy/XwpaTUMoRY9vdQ4dAeZ5/zHT/RfoIafaH4YTtvOBTpigZQqum");
         xhttp.send();
-    }
-
-    function changeWindSpeedUnit() {
-        switch(windSpeedUnit) {
-            case "mph": windSpeedUnit = "m/s"; break;
-            case "m/s": windSpeedUnit = "kn";  break;
-            case "kn":  windSpeedUnit = "mph"; break;
-        }
-        getWeatherData();
     }
 
     setInterval(function() { getWeatherData(); }, 20*1000);
