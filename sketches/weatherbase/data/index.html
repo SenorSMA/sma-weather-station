@@ -109,6 +109,8 @@
         #weather-table td:nth-child(2) { text-align: left; font-size: 28pt; padding-right: 4px; }
         #weather-table td:last-child   { text-align: right; font-size: 32pt; }
 
+        #title-sub { font-size: 60%; }
+
         /* ── PHONE LAYOUT ── */
         @media (max-width: 600px) {
             body           { font-size: 20pt; }
@@ -146,7 +148,7 @@
                 <!-- Flag shows the language you can switch TO, not the current language -->
                 <button id="lang-toggle" onclick="toggleLanguage()">🇺🇸</button>
                 <center><h1 id="title-main" style="font-size: 135%; color:#4A4038; margin: 0;">SMA Weather</h1></center>
-                <center><h3 id="title-sub" style="font-size: 60%; color:#5A4F47; margin: 8px 0;">Central Mexico 6,614 ft</h3></center>
+                <center><h3 id="title-sub" style="color:#5A4F47; margin: 8px 0;">Central Mexico 6,614 ft</h3></center>
                 <p id="date-line" style="font-size: 40%; font-weight: bold; text-align: center; margin: 0 0 4px 0;"><span id="updated">-</span> <span id="offline"></span></p>
             </div>
 
