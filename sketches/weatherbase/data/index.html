@@ -128,7 +128,7 @@
             #weather-table td:nth-child(1) img { display: block; margin-left: -2px; height: 64px !important; width: auto !important; }
             #weather-table td:nth-child(2) { width: 42%; font-size: 18pt; font-weight: bold; padding-right: 2px; padding-left: 8px; white-space: nowrap; }
             #weather-table td:last-child   { font-size: 16pt; font-weight: bold; text-align: right; white-space: nowrap; padding-left: 4px; padding-right: 8px; }
-            #wind-row td:last-child        { font-size: 13pt !important; white-space: normal !important; }
+            #wind-row td:last-child        { font-size: 13pt !important; white-space: nowrap !important; }
             #wind button { width: 27px !important; height: 27px !important; font-size: 9pt !important; color: white !important; }
             #title-sub   { margin: 5px 0 !important; font-size: 72% !important; font-weight: bold !important; }
             #date-line   { font-size: 62% !important; text-align: center; margin: 0; }
@@ -391,8 +391,8 @@
                 wind += " (" + t.gusts + " " + maxG + ")";
             if (jsonObj.weather.winddirection != "-") {
                 var arrowH = isPhone ? 22 : 32;
-                wind += " <img src='wind" + jsonObj.weather.winddirection + ".png' height='" + arrowH + "' style='vertical-align:middle;position:relative;top:-1px'>&nbsp;";
-                wind += jsonObj.weather.winddirection;
+                wind += " <img src='wind" + jsonObj.weather.winddirection + ".png' height='" + arrowH + "' style='vertical-align:middle;position:relative;top:-1px'>";
+                if (!isPhone) wind += "&nbsp;" + jsonObj.weather.winddirection;
             }
             if (isPhone && maxG != "-" && maxG != windVal)
                 wind += " ↑" + maxG;
