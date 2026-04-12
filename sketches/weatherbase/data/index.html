@@ -128,9 +128,9 @@
             #weather-table td:last-child   { font-size: 16pt; font-weight: bold; text-align: right; white-space: nowrap; padding-left: 4px; padding-right: 8px; }
             #wind-row td:last-child        { font-size: 13pt !important; }
             #wind button { width: 27px !important; height: 27px !important; font-size: 9pt !important; color: white !important; }
-            #title-sub   { margin-top: -15px !important; }
-            #date-line   { font-size: 62% !important; text-align: center; margin: 20px 0 0 0; }
-            #current-header { font-size: 62% !important; }
+            #title-sub   { margin: 5px 0 !important; }
+            #date-line   { font-size: 62% !important; text-align: center; margin: 0; }
+            #current-header { font-size: 68% !important; }
         }
     </style>
 </head>
@@ -145,8 +145,8 @@
                 <a id="forecast-btn" href="forecast.html" title="5-Day Forecast">&#8594;</a>
                 <!-- Flag shows the language you can switch TO, not the current language -->
                 <button id="lang-toggle" onclick="toggleLanguage()">🇺🇸</button>
-                <center><h1 id="title-main" style="font-size: 135%; color:#4A4038">SMA Weather</h1></center>
-                <center><h3 id="title-sub" style="font-size: 60%; color:#5A4F47; margin-top: -35px; margin-bottom: 2px;">Central Mexico 6,614 ft</h3></center>
+                <center><h1 id="title-main" style="font-size: 135%; color:#4A4038; margin: 0;">SMA Weather</h1></center>
+                <center><h3 id="title-sub" style="font-size: 60%; color:#5A4F47; margin: 8px 0;">Central Mexico 6,614 ft</h3></center>
                 <p id="date-line" style="font-size: 40%; font-weight: bold; text-align: center; margin: 0 0 4px 0;"><span id="updated">-</span> <span id="offline"></span></p>
             </div>
 
@@ -154,7 +154,7 @@
         </div>
 
         <div class="item-current">
-            <h3 id="current-header" style="font-size: 55%; text-align: center; color: #4A4038;">Current Conditions</h3>
+            <h3 id="current-header" style="font-size: 60%; text-align: center; color: #4A4038;">Current Conditions</h3>
             <table id="weather-table">
                 <tr><td style="text-align:center"><img src="temperature.png" height="80"></td><td id="lbl-temp">Temperature</td><td><span id="temperature">-</span></td></tr>
                 <tr><td style="text-align:center"><img src="humidity.png" height="80"></td><td id="lbl-humidity">Humidity</td><td><span id="humidity">-</span></td></tr>
