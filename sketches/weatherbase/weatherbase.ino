@@ -11,6 +11,11 @@
  *                           - Removed propagateToOpenHAB() - OpenHAB not in use
  *                           - Added 5-second timeout to HTTPClient
  *                           - Moved credentials to secrets.h
+ *  MODIFIED: April 2026   - Disabled OpenHAB integration (openhabian offline):
+ *                           - Commented out setOpenHABHost(), setSignalStrengthItem(),
+ *                             setLastStartItem(), addWANGateway(), and updateItem() calls
+ *                           - These were causing loop() to block on TCP timeouts,
+ *                             dropping HC12 packets and causing stale JSONBin data
  * -------------------------------------------------------------------------------- */
 
 #include "secrets.h"         // WiFi credentials and API keys - keep out of version control
@@ -422,10 +427,10 @@ static void propagateToOpenHAB() {
 void setup() {
   Bolbro.setSerialBaud(115200l);
   Bolbro.addWiFi(WIFI_SSID, WIFI_PASSWORD);   // credentials now sourced from secrets.h
-  Bolbro.addWANGateway("WAN");
-  Bolbro.setOpenHABHost("openhabian");
-  Bolbro.setSignalStrengthItem("ESP32_Weatherbase_SignalStrength");
-  Bolbro.setLastStartItem("ESP32_Weatherbase_LastStart");
+  // Bolbro.addWANGateway("WAN");                                    // disabled - causes blocking timeouts when unreachable
+  // Bolbro.setOpenHABHost("openhabian");                            // disabled - OpenHAB offline
+  // Bolbro.setSignalStrengthItem("ESP32_Weatherbase_SignalStrength"); // disabled - requires OpenHAB
+  // Bolbro.setLastStartItem("ESP32_Weatherbase_LastStart");           // disabled - requires OpenHAB
   Bolbro.setup("Weatherbase", DEBUG, USEREMOTEDEBUG);
   Serial.println("Weather setup...");
   Bolbro.connectToWiFi();
@@ -487,7 +492,7 @@ void loop() {
 
   if (!stationOnlineStatus || strcmp(stationOnlineStatus, stationOffline ? "OFF" : "ON") != 0) {
     stationOnlineStatus = stationOffline ? "OFF" : "ON";
-    Bolbro.updateItem("ESP32_Weatherstation_Status", stationOnlineStatus);
+    // Bolbro.updateItem("ESP32_Weatherstation_Status", stationOnlineStatus);  // disabled - requires OpenHAB
   }
 
   secondsPassed = (currentMillis - lastMillisSunCalculated) / MS2S_FACTOR;
