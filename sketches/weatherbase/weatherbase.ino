@@ -44,7 +44,7 @@
 const char* jsonbinURL            = "https://api.jsonbin.io/v3/b/696e511cae596e708fe6da08";
 const char* jsonbinKey            = JSONBIN_MASTER_KEY;
 unsigned long lastJSONBinUpdate   = 0;
-const unsigned long jsonbinUpdateInterval = 60000;
+const unsigned long jsonbinUpdateInterval = 20000;  // match remote station report interval
 
 //  Tracks whether JSONBin has received the most recent packet
 time_t lastPacketUpdateAtJSONBin  = 0;
