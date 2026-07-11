@@ -240,6 +240,8 @@ class WeatherWebServer : public BolbroWebServer {
       on("/windNNW.png",              [this]() { loadFromSpiffs("/windNNW.png"); });
       on("/RedDot12.png",             [this]() { loadFromSpiffs("/RedDot12.png"); });
       on("/GreenDot12.png",           [this]() { loadFromSpiffs("/GreenDot12.png"); });
+      on("/apple-touch-icon.png",     [this]() { loadFromSpiffs("/apple-touch-icon.png"); });	     on("/favicon-32.png",           [this]() { loadFromSpiffs("/favicon-32.png"); });   
+      on("/favicon-16.png",           [this]() { loadFromSpiffs("/favicon-16.png"); });
       on("/weatherdata.json",         [this]() { handleWeatherData(); });
       on("/forecast-configuration.json", [this]() { handleForecastConfiguration(); });
       on("/calibrationdata.json",     [this]() { handleCalibrationData(); });
@@ -434,9 +436,20 @@ void setup() {
   Bolbro.setup("Weatherbase", DEBUG, USEREMOTEDEBUG);
   Serial.println("Weather setup...");
   Bolbro.connectToWiFi();
+  Bolbro.setTimezone(0, 0);   // Force NTP to sync pure UTC; overwrites stale "Germany" default in flash
   Bolbro.configureTime();
-  setenv("TZ", "CST6", 1);   // Mexico Central Time — UTC-6, no DST since 2023
-  tzset();
+
+  // Wait for NTP sync to actually complete before applying our timezone,
+  // since setting TZ before sync finishes can be overwritten by the ESP32's SNTP process
+  struct tm timeinfo;
+  int syncAttempts = 0;
+  while (!getLocalTime(&timeinfo, 1000) && syncAttempts < 20) {
+  Serial.println("Waiting for NTP time sync...");
+  syncAttempts++;
+}
+
+setenv("TZ", "CST6", 1);   // Mexico Central Time — UTC-6, no DST since 2023
+tzset();
   calibrationPacket.restore();
   Serial.printf("Base setup...\n");
   HC12.begin();
@@ -447,6 +460,7 @@ void setup() {
 }
 
 void loop() {
+  setenv("TZ", "CST6", 1); tzset();   // Reapply every loop — Bolbro's internal retry can silently reset TZ
   static unsigned long lastMillisLEDTurnedOn    = 0;
   static unsigned long lastMillisSunCalculated  = 0;
   static unsigned long lastMillisPacketUpdated  = 0;
