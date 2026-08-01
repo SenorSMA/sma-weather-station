@@ -508,9 +508,9 @@ void loop() {
 
   //  Update Firestore every 40 seconds, but only if new sensor data has arrived since last push
   if (currentMillis - lastFirestoreUpdate >= firestoreUpdateInterval) {
-    if (lastPacketUpdate != lastPacketUpdateAtJSONBin) {
+    if (lastPacketUpdate != lastPacketUpdateAtFirestore) {
       updateFirestoreWeatherData();
-      lastPacketUpdateAtJSONBin = lastPacketUpdate;
+      lastPacketUpdateAtFirestore = lastPacketUpdate;
     }
     lastFirestoreUpdate = currentMillis;
   }
