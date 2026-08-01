@@ -40,14 +40,12 @@
 #define FORECASTNUMDAYS  5
 #define APIKEY           OWM_APIKEY
 
-//  JSONBin configuration for remote access
-const char* jsonbinURL            = "https://api.jsonbin.io/v3/b/696e511cae596e708fe6da08";
-const char* jsonbinKey            = JSONBIN_MASTER_KEY;
-unsigned long lastJSONBinUpdate   = 0;
-const unsigned long jsonbinUpdateInterval = 20000;  // match remote station report interval
+//  Firestore configuration for remote access
+unsigned long lastFirestoreUpdate = 0;
+const unsigned long firestoreUpdateInterval = 40000;  // match remote station report interval
 
-//  Tracks whether JSONBin has received the most recent packet
-time_t lastPacketUpdateAtJSONBin  = 0;
+//  Tracks whether Firestore has received the most recent packet
+time_t lastPacketUpdateAtFirestore = 0;
 
 //  Weather data
 WeatherPacket weatherPacket;
@@ -94,10 +92,24 @@ static void updateAggregates() {
     barometricHistory.addSample(weatherPacket.mPressureHPA);
 }
 
-//  JSONBin update — only called when new weather data has arrived
-static void updateJSONBinWeatherData() {
+//  Escape a string so it can be safely embedded inside a Firestore JSON string value
+static String escapeForFirestore(const String &input) {
+  String out;
+  out.reserve(input.length() + 10);
+  for (unsigned int i = 0; i < input.length(); i++) {
+    char c = input[i];
+    if (c == '"' || c == '\\') { out += '\\'; out += c; }
+    else if (c == '\n') out += "\\n";
+    else if (c == '\r') { /* skip */ }
+    else out += c;
+  }
+  return out;
+}
+
+//  Firestore update — only called when new weather data has arrived
+static void updateFirestoreWeatherData() {
   if (WiFi.status() != WL_CONNECTED) {
-    LOG->println("Cannot update JSONBin - WiFi not connected");
+    LOG->println("Cannot update Firestore - WiFi not connected");
     return;
   }
 
@@ -174,17 +186,28 @@ static void updateJSONBinWeatherData() {
   json += "  \"offline\": "       + String(stationOffline ? "true" : "false")         + "\n";
   json += "}";
 
-  http.begin(jsonbinURL);
-  http.setTimeout(5000);   // 5-second timeout — prevents blocking loop() if JSONBin is slow
-  http.addHeader("Content-Type", "application/json");
-  http.addHeader("X-Master-Key", jsonbinKey);
+  // Wrap the same JSON blob as a Firestore string field, plus the shared secret
+  String body = "{\"fields\":{";
+  body += "\"data\":{\"stringValue\":\"" + escapeForFirestore(json) + "\"},";
+  body += "\"secret\":{\"stringValue\":\"" + String(FIRESTORE_SHARED_SECRET) + "\"}";
+  body += "}}";
 
-  int httpCode = http.PUT(json);
+  String firestoreURL = "https://firestore.googleapis.com/v1/projects/" +
+                         String(FIRESTORE_PROJECT_ID) +
+                         "/databases/(default)/documents/weather/current";
+
+  http.begin(firestoreURL);
+  http.setTimeout(5000);   // 5-second timeout — prevents blocking loop() if Firestore is slow
+  http.addHeader("Content-Type", "application/json");
+
+  int httpCode = http.PATCH(body);
 
   if (httpCode == 200)
-    LOG->println("JSONBin updated successfully");
-  else
-    LOG->printf("JSONBin update failed: HTTP %d\n", httpCode);
+    LOG->println("Firestore updated successfully");
+  else {
+    LOG->printf("Firestore update failed: HTTP %d\n", httpCode);
+    LOG->println(http.getString());   // prints Firestore's error message for debugging
+  }
 
   http.end();
 }
@@ -456,7 +479,7 @@ tzset();
   pinMode(LED_PIN, OUTPUT);
   server.begin();
   Serial.println("HTTP server started");
-  Serial.println("JSONBin weather updates enabled");
+  Serial.println("Firestore weather updates enabled");
 }
 
 void loop() {
@@ -483,13 +506,13 @@ void loop() {
     }
   }
 
-  //  Update JSONBin every 60 seconds, but only if new sensor data has arrived since last push
-  if (currentMillis - lastJSONBinUpdate >= jsonbinUpdateInterval) {
+  //  Update Firestore every 40 seconds, but only if new sensor data has arrived since last push
+  if (currentMillis - lastFirestoreUpdate >= firestoreUpdateInterval) {
     if (lastPacketUpdate != lastPacketUpdateAtJSONBin) {
-      updateJSONBinWeatherData();
+      updateFirestoreWeatherData();
       lastPacketUpdateAtJSONBin = lastPacketUpdate;
     }
-    lastJSONBinUpdate = currentMillis;
+    lastFirestoreUpdate = currentMillis;
   }
 
   unsigned long secondsPassed = (currentMillis - lastMillisLEDTurnedOn) / MS2S_FACTOR;
