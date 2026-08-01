@@ -42,7 +42,7 @@
 
 //  Firestore configuration for remote access
 unsigned long lastFirestoreUpdate = 0;
-const unsigned long firestoreUpdateInterval = 40000;  // match remote station report interval
+const unsigned long firestoreUpdateInterval = 20000;  // match remote station report interval
 
 //  Tracks whether Firestore has received the most recent packet
 time_t lastPacketUpdateAtFirestore = 0;
