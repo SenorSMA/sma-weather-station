@@ -446,8 +446,14 @@
         var xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
-                var response = JSON.parse(this.responseText);
-                var jsonObj  = JSON.parse(response.fields.data.stringValue);
+                var jsonObj;
+                try {
+                    var response = JSON.parse(this.responseText);
+                    jsonObj = JSON.parse(response.fields.data.stringValue);
+                } catch (e) {
+                    console.error("Parse failed:", e, this.responseText);
+                    return;
+                }
                 lastJsonObj  = jsonObj;
 
                 if (jsonObj.message != undefined && jsonObj.message != "")
