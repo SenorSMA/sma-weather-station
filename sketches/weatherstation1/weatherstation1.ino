@@ -641,6 +641,13 @@ void setup() {
   attachInterrupt(digitalPinToInterrupt(WINDSPEED_PIN), handleWindSpeed, RISING);
 #endif // USE_WIND_REED||USE_WIND_AS5600
 
+#if USE_WIND_AS5600
+  // Added 2026-08-04: restores full 0-3.3V ADC range for AS5600 wind vane read.
+  // Missing since at least the start of this repo's tracked history; likely cause
+  // of wind direction reading stuck at a constant value.
+  analogSetPinAttenuation(WIND_VANE_PIN, ADC_11db);
+#endif // USE_WIND_AS5600
+
 #if DEBUG
   startSerial();  
   Serial.println("finished setup, continuing to loop()");
